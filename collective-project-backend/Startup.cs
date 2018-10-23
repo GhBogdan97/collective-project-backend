@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using collective_project_backend.Data;
-using collective_project_backend.Models;
-using collective_project_backend.Services;
+using DatabaseAccess.Data;
+using DatabaseAccess.Models;
+using Services;
 
 namespace collective_project_backend
 {
@@ -32,7 +32,6 @@ namespace collective_project_backend
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
@@ -50,19 +49,14 @@ namespace collective_project_backend
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler();
             }
 
             app.UseStaticFiles();
 
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
     }
 }
