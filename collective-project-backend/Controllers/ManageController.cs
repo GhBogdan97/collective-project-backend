@@ -9,10 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using collective_project_backend.Models;
-using collective_project_backend.Models.ManageViewModels;
-using collective_project_backend.Services;
+using collective_project_backend.ViewModels.ManageViewModels;
+using DatabaseAccess.Models;
+using Services;
 
 namespace collective_project_backend.Controllers
 {
