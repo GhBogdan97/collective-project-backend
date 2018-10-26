@@ -4,37 +4,22 @@ using DatabaseAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DatabaseAccess.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181026195834_AddedInternshipTable")]
+    partial class AddedInternshipTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("DatabaseAccess.Models.Application", b =>
-                {
-                    b.Property<int>("InternshipId");
-
-                    b.Property<int>("StudentId");
-
-                    b.Property<bool>("Accepted");
-
-                    b.Property<int>("Status");
-
-                    b.HasKey("InternshipId", "StudentId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Applications");
-                });
 
             modelBuilder.Entity("DatabaseAccess.Models.ApplicationUser", b =>
                 {
@@ -118,8 +103,6 @@ namespace DatabaseAccess.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CompanyId");
-
                     b.Property<string>("Description");
 
                     b.Property<DateTime>("End");
@@ -134,98 +117,7 @@ namespace DatabaseAccess.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
-
                     b.ToTable("Internships");
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Post", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Date");
-
-                    b.Property<byte[]>("Image");
-
-                    b.Property<int>("InternshipId");
-
-                    b.Property<bool>("Last");
-
-                    b.Property<string>("Title")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InternshipId");
-
-                    b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Rating", b =>
-                {
-                    b.Property<int>("InternshipId");
-
-                    b.Property<int>("StudentId");
-
-                    b.Property<int>("RatingCompany");
-
-                    b.Property<int>("RatingInternship");
-
-                    b.Property<int>("RatingMentors");
-
-                    b.Property<string>("Testimonial");
-
-                    b.HasKey("InternshipId", "StudentId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Ratings");
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Student", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("College");
-
-                    b.Property<byte[]>("Cv");
-
-                    b.Property<string>("Firstname");
-
-                    b.Property<string>("IdUser");
-
-                    b.Property<string>("Lastname");
-
-                    b.Property<string>("Specialization");
-
-                    b.Property<string>("University");
-
-                    b.Property<int>("Year");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdUser")
-                        .IsUnique()
-                        .HasFilter("[IdUser] IS NOT NULL");
-
-                    b.ToTable("Students");
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Subscription", b =>
-                {
-                    b.Property<int>("StudentId");
-
-                    b.Property<int>("CompanyId");
-
-                    b.HasKey("StudentId", "CompanyId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -338,73 +230,11 @@ namespace DatabaseAccess.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("DatabaseAccess.Models.Application", b =>
-                {
-                    b.HasOne("DatabaseAccess.Models.Internship", "Internship")
-                        .WithMany("Applications")
-                        .HasForeignKey("InternshipId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("DatabaseAccess.Models.Student", "Student")
-                        .WithMany("Applications")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("DatabaseAccess.Models.Company", b =>
                 {
                     b.HasOne("DatabaseAccess.Models.ApplicationUser")
                         .WithOne()
                         .HasForeignKey("DatabaseAccess.Models.Company", "IdUser");
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Internship", b =>
-                {
-                    b.HasOne("DatabaseAccess.Models.Company", "Company")
-                        .WithMany("Internships")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Post", b =>
-                {
-                    b.HasOne("DatabaseAccess.Models.Internship", "Internship")
-                        .WithMany("Posts")
-                        .HasForeignKey("InternshipId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Rating", b =>
-                {
-                    b.HasOne("DatabaseAccess.Models.Internship", "Internship")
-                        .WithMany("Ratings")
-                        .HasForeignKey("InternshipId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("DatabaseAccess.Models.Student", "Student")
-                        .WithMany("Ratings")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Student", b =>
-                {
-                    b.HasOne("DatabaseAccess.Models.ApplicationUser")
-                        .WithOne()
-                        .HasForeignKey("DatabaseAccess.Models.Student", "IdUser");
-                });
-
-            modelBuilder.Entity("DatabaseAccess.Models.Subscription", b =>
-                {
-                    b.HasOne("DatabaseAccess.Models.Company", "Company")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("DatabaseAccess.Models.Student", "Student")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DatabaseAccess.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace collective_project_backend
 {
@@ -14,7 +9,21 @@ namespace collective_project_backend
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+
+            var host = BuildWebHost(args);
+            using (var scope = host.Services.CreateScope())
+            {
+                //var services = scope.ServiceProvider;
+                var services = scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+                var context = services.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+               
+                //services.ServiceProvider.GetService<ApplicationDbContext>().Initialize();
+                //services.ServiceProvider.GetService<UserManager<ApplicationUser>>().Seed();
+
+                DbInitializer.Initialize(context);
+
+            }
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
