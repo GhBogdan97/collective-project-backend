@@ -10,9 +10,11 @@ namespace DatabaseAccess.UOW
         private readonly ApplicationDbContext _context;
 
         IRepository<Student> _StudentRepository;
-
-
-        public UnitOfWork()
+		IRepository<Application> _ApplicationRepository;
+		IRepository<Internship> _InternshipRepository;
+		IRepository<Subscription> _SubscriptionRepository;
+		
+		public UnitOfWork()
         {
             this._context = new DbContextFactory().CreateDbContext(new string[] { });
         }
@@ -25,18 +27,35 @@ namespace DatabaseAccess.UOW
                     _StudentRepository = new Repository<Student>(_context);
                 return _StudentRepository;
             }
-        }
+		}
+
+		public IRepository<Application> ApplicationRepository {
+			get {
+				if (_ApplicationRepository == null)
+					_ApplicationRepository = new Repository<Application>(_context);
+				return _ApplicationRepository;
+			}
+		}
+
+		public IRepository<Internship> InternshipRepository {
+			get {
+				if (_InternshipRepository == null)
+					_InternshipRepository = new Repository<Internship>(_context);
+				return _InternshipRepository;
+			}
+		}
+
+		public IRepository<Subscription> SubscriptionRepository {
+			get {
+				if (_SubscriptionRepository == null)
+					_SubscriptionRepository = new Repository<Subscription>(_context);
+				return _SubscriptionRepository;
+			}
+		}
 
 
 
-
-
-
-
-
-
-
-        private bool disposed = false;
+		private bool disposed = false;
         public void Dispose()
         {
             Dispose(true);

@@ -14,6 +14,20 @@ namespace Services
             {
                 return uow.StudentRepository.GetAll();
             }
-        }
-    }
+		}
+
+		public void AddStudent(Student student) {
+			using (UnitOfWork uow = new UnitOfWork()) {
+				uow.StudentRepository.AddEntity(student);
+			}
+		}
+
+		public void UpdateStudent(Student student)
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				uow.StudentRepository.UpdateEntity(student);
+			}
+		}
+	}
 }
