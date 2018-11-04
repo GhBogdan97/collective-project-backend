@@ -38,6 +38,11 @@ namespace DatabaseAccess.Repositories
             return dbset.ToList();
         }
 
+        public IQueryable<TEntity> getDbSet()
+        {
+            return dbset;
+        }
+
         public TEntity GetById(int id)
         {
             return dbset.Find(id);
