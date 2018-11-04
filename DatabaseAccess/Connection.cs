@@ -6,7 +6,7 @@
         {
             get
             {
-                return "Data Source=DESKTOP-L6BBN0T\\SQLEXPRESS;Initial Catalog=Internship1;Integrated Security=True;";
+                return "Data Source=ALEX-PC;Initial Catalog=Internship1;Integrated Security=True;";
             }
         }
     }
