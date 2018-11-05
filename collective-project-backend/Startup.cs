@@ -33,7 +33,10 @@ namespace collective_project_backend
 
             services.AddMvc();
             services.AddTransient<ApplicationService>();
-        }
+			services.AddTransient<StudentService>();
+			services.AddTransient<SubscriptionService>();
+			services.AddTransient<InternshipService>();
+		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
