@@ -26,5 +26,37 @@ namespace Services
 					.ToList();
 			}
 		}
+
+		public void AddSubscription(Subscription subscription)
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				if (uow.StudentRepository.GetById(subscription.StudentId) == null)
+				{
+					throw new Exception("There is no student with id = " + subscription.StudentId);
+				}
+				if (uow.CompanyRepository.GetById(subscription.CompanyId) == null)
+				{
+					throw new Exception("There is no company with id = " + subscription.CompanyId);
+				}
+				uow.SubscriptionRepository.AddEntity(subscription);
+				uow.Save();
+			}
+		}
+
+		public void UpdateSubscription(Subscription subscription)
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				if (uow.StudentRepository.GetById(subscription.StudentId) == null
+					|| uow.CompanyRepository.GetById(subscription.CompanyId) == null)
+				{
+					throw new Exception("There is no subscription with student's id = " + subscription.StudentId
+						+ " and with company's id = " + subscription.CompanyId);
+				}
+				uow.SubscriptionRepository.UpdateEntity(subscription);
+				uow.Save();
+			}
+		}
 	}
 }

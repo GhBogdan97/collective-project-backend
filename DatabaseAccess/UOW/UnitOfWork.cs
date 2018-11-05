@@ -13,7 +13,8 @@ namespace DatabaseAccess.UOW
 		IRepository<Application> _ApplicationRepository;
 		IRepository<Internship> _InternshipRepository;
 		IRepository<Subscription> _SubscriptionRepository;
-		
+		IRepository<Company> _CompanyRepository;
+
 		public UnitOfWork()
         {
             this._context = new DbContextFactory().CreateDbContext(new string[] { });
@@ -50,6 +51,16 @@ namespace DatabaseAccess.UOW
 				if (_SubscriptionRepository == null)
 					_SubscriptionRepository = new Repository<Subscription>(_context);
 				return _SubscriptionRepository;
+			}
+		}
+
+		public IRepository<Company> CompanyRepository
+		{
+			get
+			{
+				if (_CompanyRepository == null)
+					_CompanyRepository = new Repository<Company>(_context);
+				return _CompanyRepository;
 			}
 		}
 

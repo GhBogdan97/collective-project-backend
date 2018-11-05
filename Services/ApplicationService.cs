@@ -28,7 +28,16 @@ namespace Services
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
+				if (uow.StudentRepository.GetById(application.StudentId) == null)
+				{
+					throw new Exception("There is no student with id = " + application.StudentId);
+				}
+				if (uow.InternshipRepository.GetById(application.InternshipId) == null)
+				{
+					throw new Exception("There is no internship with id = " + application.InternshipId);
+				}
 				uow.ApplicationRepository.AddEntity(application);
+				uow.Save();
 			}
 		}
 
@@ -36,7 +45,14 @@ namespace Services
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
+				if (uow.StudentRepository.GetById(application.StudentId) == null 
+					|| uow.InternshipRepository.GetById(application.InternshipId) == null)
+				{
+					throw new Exception("There is no application with student's id = " + application.StudentId 
+						+ " and with internship's id = " + application.InternshipId);
+				}
 				uow.ApplicationRepository.UpdateEntity(application);
+				uow.Save();
 			}
 		}
 	}

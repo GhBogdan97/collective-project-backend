@@ -18,11 +18,6 @@ namespace API.Controllers
 		private readonly InternshipService _internshipService;
 		private readonly SubscriptionService _subscriptionService;
 
-		public StudentController(StudentService studentService)
-		{
-			_studentService = studentService;
-		}
-
 		public StudentController(StudentService studentService, ApplicationService applicationService,
 			InternshipService internshipService, SubscriptionService subscriptionService)
 		{
@@ -32,15 +27,16 @@ namespace API.Controllers
 			_subscriptionService = subscriptionService;
 		}
 
-		[HttpGet]
+		[HttpGet("getStudents")]
 		public IActionResult GetAllStudents()
 		{
 			return Ok(_studentService.GetAllStudents());
 		}
 
-		[HttpGet]
+		[HttpGet("getStudentsByInternshipId")]
 		public IActionResult GetStudentsByInternshipId(int InternshipId)
 		{
+			//var InternshipId = Request.Cookies["InternshipId"];
 			var studentIds = _applicationService.GetStudentIdsByInternshipId(InternshipId);
 			var students = _studentService.GetAllStudents();
 			IList<Student> studentsByInternshipId = new List<Student>();
@@ -57,9 +53,10 @@ namespace API.Controllers
 			return Ok(studentsByInternshipId);
 		}
 
-		[HttpGet]
+		[HttpGet("GetStudentsByCompanyId")]
 		public IActionResult GetStudentsByCompanyId(int CompanyId)
 		{
+			//var CompanyId = Request.Cookies["CompanyId"];
 			var studentIds = _subscriptionService.GetStudentIdsByCompanyId(CompanyId);
 			var students = _studentService.GetAllStudents();
 			IList<Student> studentsByCompanyId = new List<Student>();
@@ -86,22 +83,83 @@ namespace API.Controllers
 		[HttpPost("updateStudent")]
 		public IActionResult UpdateStudent([FromBody] Student student)
 		{
-			_studentService.UpdateStudent(student);
-			return Ok();
+			try
+			{
+				if(!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+				_studentService.UpdateStudent(student);
+				return Ok();
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e);
+			}
 		}
 
 		[HttpPost("addApplication")]
 		public IActionResult AddApplication([FromBody] Application application)
 		{
-			_applicationService.AddApplication(application);
-			return Ok();
+			try
+			{
+				_applicationService.AddApplication(application);
+				return Ok();
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e);
+			}
 		}
 
 		[HttpPost("updateApplication")]
 		public IActionResult UpdateApplication([FromBody] Application application)
 		{
-			_applicationService.UpdateApplication(application);
-			return Ok();
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+				_applicationService.UpdateApplication(application);
+				return Ok();
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e);
+			}
+		}
+
+		[HttpPost("addSubscription")]
+		public IActionResult AddSubscription([FromBody] Subscription Subscription)
+		{
+			try
+			{
+				_subscriptionService.AddSubscription(Subscription);
+				return Ok();
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e);
+			}
+		}
+
+		[HttpPost("updateSubscription")]
+		public IActionResult UpdateSubscription([FromBody] Subscription Subscription)
+		{
+			try
+			{
+				if (!ModelState.IsValid)
+				{
+					return BadRequest(ModelState);
+				}
+				_subscriptionService.UpdateSubscription(Subscription);
+				return Ok();
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e);
+			}
 		}
 	}
 }
