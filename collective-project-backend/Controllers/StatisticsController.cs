@@ -40,19 +40,19 @@ namespace API.Controllers
 
             try
             {
-                var id = _companyService.GetCompanyIdForUser(userId);
-                internships = _internshipService.GetInternshipsForCompany(id);
-                var years = internships.Select(i => i.Start.Year).Distinct().ToList();
-                foreach (var year in years)
-                {
-                    int nrApplications = _statisticsService.GetNrApplicationsPerYear(id, year);
-                    ApplicationsPerYearViewModel viewModel = new ApplicationsPerYearViewModel()
-                    {
-                        Year = year,
-                        NumberOfStudents = nrApplications
-                    };
-                    applicationsPerYear.Add(viewModel);
-                };
+                //var id = _companyService.GetCompanyIdForUser(userId);
+                //internships = _internshipService.GetInternshipsForCompany(id);
+                //var years = internships.Select(i => i.Start.Year).Distinct().ToList();
+                //foreach (var year in years)
+                //{
+                //    int nrApplications = _statisticsService.GetNrApplicationsPerYear(id, year);
+                //    ApplicationsPerYearViewModel viewModel = new ApplicationsPerYearViewModel()
+                //    {
+                //        Year = year,
+                //        NumberOfStudents = nrApplications
+                //    };
+                //    applicationsPerYear.Add(viewModel);
+                //};
 
                 return Ok(applicationsPerYear);
 

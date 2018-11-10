@@ -110,7 +110,7 @@ namespace API.Controllers
             try
             {
                 var internship = _internshipService.GetInternshipDetails(id);
-                var ratingDTO = _internshipService.GetInternshipRatings(id);
+                var ratingDTO = _internshipService.GetInternshipRatingsAverege(id);
                 var internshipDetailsRating = InternshipDetailsRatingMapper.ToInternshipDetailsRating(internship, ratingDTO);
                 return Ok(internshipDetailsRating);
             }

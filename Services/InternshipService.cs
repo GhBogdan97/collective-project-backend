@@ -83,7 +83,7 @@ namespace Services
             }
         }
 
-        public RatingDTO GetInternshipRatings(int id)
+        public RatingDTO GetInternshipRatingsAverege(int id)
         {
             using (var uow = new UnitOfWork())
             {
