@@ -47,8 +47,8 @@ namespace API.Controllers
                             Places = internship.Places,
                             Topics = internship.Topics,
                             Weeks = internship.Weeks,
-                            End = internship.End.Date.ToString(),
-                            Start = internship.Start.Date.ToString()
+                            End = internship.End.Date.ToShortDateString(),
+                            Start = internship.Start.Date.ToShortDateString()
                         };
                         viewModels.Add(viewModel);
                     }
