@@ -6,18 +6,41 @@ using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
+
 namespace API.Controllers
 {
     [Route("internships")]
     [ApiController]
     public class InternshipController : ControllerBase
     {
+
         private readonly InternshipService _internshipService;
 
         public InternshipController(InternshipService internshipService)
         {
             _internshipService = internshipService;
         }
+
+        [HttpPost]
+        [Route("add")]
+        public IActionResult AddInternship(Internship internship)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                _internshipService.AddInternship(internship);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+
+        }
+    
 
         [HttpPut]
         public IActionResult updateInternship(Internship internship)
