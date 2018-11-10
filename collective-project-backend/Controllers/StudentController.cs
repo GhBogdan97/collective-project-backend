@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllStudents()
+        public ActionResult<IList<Student>> GetAllStudents()
         {
             return Ok(_studentService.GetAllStudents());
         }

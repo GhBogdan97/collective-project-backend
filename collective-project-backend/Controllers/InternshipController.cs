@@ -9,12 +9,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
+
 namespace API.Controllers
 {
     [Route("internships")]
     [ApiController]
     public class InternshipController : ControllerBase
     {
+
         private readonly InternshipService _internshipService;
         private readonly CompanyService _companyService;
 
@@ -27,7 +29,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Roles="Company")]
-        public IActionResult GetAllInternships()
+        public ActionResult<List<InternshipMainAttributesViewModel>> GetAllInternships()
         {
             var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
             if(claim!=null)
@@ -63,6 +65,27 @@ namespace API.Controllers
             return BadRequest("Compania nu a fost recunoscuta");
         }
 
+
+        [HttpPost]
+        [Route("add")]
+        public IActionResult AddInternship(Internship internship)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                _internshipService.AddInternship(internship);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+
+        }
+    
 
         [HttpPut]
         public IActionResult updateInternship(Internship internship)
