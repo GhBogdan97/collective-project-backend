@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Services;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace collective_project_backend
 {
@@ -36,6 +37,13 @@ namespace collective_project_backend
             services.AddTransient<PostService>();
             services.AddTransient<InternshipService>();
             services.AddTransient<CompanyService>();
+            services.AddTransient<StatisticsService>();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "InterLink API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +65,17 @@ namespace collective_project_backend
             app.UseAuthentication();
 
             app.UseMvc();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("swagger/v1/swagger.json", "InterLink API V1");
+                c.RoutePrefix = string.Empty;
+            });
         }
     }
 }

@@ -108,6 +108,7 @@ namespace collective_project_backend.Controllers
 
 
         [HttpGet]
+        [Route("confirm-email")]
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
@@ -158,19 +159,21 @@ namespace collective_project_backend.Controllers
         }
 
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
-        {
-            if (code == null)
-            {
-                throw new ApplicationException("A code must be supplied for password reset.");
-            }
-            var model = new ResetPasswordViewModel { Code = code };
-            return Ok(model);
-        }
+        //[HttpGet]
+        //[Route("reset-password")]
+        //[AllowAnonymous]
+        //public IActionResult ResetPassword(string code = null)
+        //{
+        //    if (code == null)
+        //    {
+        //        throw new ApplicationException("A code must be supplied for password reset.");
+        //    }
+        //    var model = new ResetPasswordViewModel { Code = code };
+        //    return Ok(model);
+        //}
 
         [HttpPost]
+        [Route("reset-password")]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
