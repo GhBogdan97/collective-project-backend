@@ -10,7 +10,7 @@ namespace DatabaseAccess.UOW
         private readonly ApplicationDbContext _context;
 
         IRepository<Student> _StudentRepository;
-        IRepository<Post> _PostRepository;
+        IRepository<Company> _CompanyRepository;
         IRepository<Internship> _InternshipRepository;
         IRepository<Application> _ApplicationsRepository;
         IRepository<Company> _CompanyRepository;

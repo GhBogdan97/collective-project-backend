@@ -52,5 +52,19 @@ namespace Services
                 return uow.InternshipRepository.getDbSet().Where(i => i.CompanyId == id).ToList();
             }
         }
+    
+
+        public void AddInternship(Internship internship)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                if (uow.CompanyRepository.GetById(internship.CompanyId) == null)
+                {
+                    throw new Exception("There is no company with id = " + internship.CompanyId);
+                }
+                uow.InternshipRepository.AddEntity(internship);
+                uow.Save();
+            }
+        }
     }
 }

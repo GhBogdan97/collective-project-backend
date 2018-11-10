@@ -36,6 +36,7 @@ namespace collective_project_backend
             services.AddTransient<StudentService>();
             services.AddTransient<PostService>();
             services.AddTransient<InternshipService>();
+            services.AddTransient<CompanyService>();
             services.AddTransient<StatisticsService>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
