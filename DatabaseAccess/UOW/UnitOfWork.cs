@@ -10,8 +10,9 @@ namespace DatabaseAccess.UOW
         private readonly ApplicationDbContext _context;
 
         IRepository<Student> _StudentRepository;
-        IRepository<Post> _PostRepository;
+        IRepository<Company> _CompanyRepository;
         IRepository<Internship> _InternshipRepository;
+        IRepository<Post> _PostRepository;
 
         public UnitOfWork()
         {
@@ -50,12 +51,15 @@ namespace DatabaseAccess.UOW
         }
 
 
-
-
-
-
-
-
+        public IRepository<Company> CompanyRepository
+        {
+            get
+            {
+                if (_CompanyRepository == null)
+                    _CompanyRepository = new Repository<Company>(_context);
+                return _CompanyRepository;
+            }
+        }
 
 
         private bool disposed = false;
