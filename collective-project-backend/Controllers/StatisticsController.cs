@@ -22,10 +22,10 @@ namespace API.Controllers
             _statisticsService = statisticsService;
             _internshipService = internshipService;
         }
-
+      
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetApplicationsPerYear(int id)
+        public ActionResult<List<ApplicationsPerYearViewModel>> GetApplicationsPerYear(int id)
         {
             var applicationsPerYear = new List<ApplicationsPerYearViewModel>();
             IList<Internship> internships = null;
