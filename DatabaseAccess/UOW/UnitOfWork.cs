@@ -14,6 +14,7 @@ namespace DatabaseAccess.UOW
         IRepository<Internship> _InternshipRepository;
         IRepository<Application> _ApplicationsRepository;
         IRepository<Post> _PostRepository;
+        IRepository<Rating> _RatingRepository;
 
         public UnitOfWork()
         {
@@ -68,6 +69,16 @@ namespace DatabaseAccess.UOW
                 if (_CompanyRepository == null)
                     _CompanyRepository = new Repository<Company>(_context);
                 return _CompanyRepository;
+            }
+        }
+
+        public IRepository<Rating> RatingRepository
+        {
+            get
+            {
+                if (_RatingRepository == null)
+                    _RatingRepository = new Repository<Rating>(_context);
+                return _RatingRepository;
             }
         }
 
