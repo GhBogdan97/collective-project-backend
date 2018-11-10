@@ -10,12 +10,24 @@ namespace DatabaseAccess.UOW
         private readonly ApplicationDbContext _context;
 
         IRepository<Student> _StudentRepository;
-
+        IRepository<Post> _PostRepository;
+        IRepository<Internship> _InternshipRepository;
 
         public UnitOfWork()
         {
             this._context = new DbContextFactory().CreateDbContext(new string[] { });
         }
+
+        public IRepository<Internship> InternshipRepository
+        {
+            get
+            {
+                if (_InternshipRepository == null)
+                    _InternshipRepository = new Repository<Internship>(_context);
+                return _InternshipRepository;
+            }
+        }
+    
 
         public IRepository<Student> StudentRepository
         {
@@ -24,6 +36,16 @@ namespace DatabaseAccess.UOW
                 if (_StudentRepository == null)
                     _StudentRepository = new Repository<Student>(_context);
                 return _StudentRepository;
+            }
+        }
+
+        public IRepository<Post> PostRepository
+        {
+            get
+            {
+                if (_PostRepository == null)
+                    _PostRepository = new Repository<Post>(_context);
+                return _PostRepository;
             }
         }
 
