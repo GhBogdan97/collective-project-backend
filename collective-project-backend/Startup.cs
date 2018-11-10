@@ -35,6 +35,7 @@ namespace collective_project_backend
             services.AddTransient<StudentService>();
             services.AddTransient<PostService>();
             services.AddTransient<InternshipService>();
+            services.AddTransient<StatisticsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

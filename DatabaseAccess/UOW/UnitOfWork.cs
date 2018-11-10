@@ -12,6 +12,8 @@ namespace DatabaseAccess.UOW
         IRepository<Student> _StudentRepository;
         IRepository<Post> _PostRepository;
         IRepository<Internship> _InternshipRepository;
+        IRepository<Application> _ApplicationsRepository;
+        IRepository<Company> _CompanyRepository;
 
         public UnitOfWork()
         {
@@ -49,14 +51,25 @@ namespace DatabaseAccess.UOW
             }
         }
 
+        public IRepository<Application> ApplicationsRepository
+        {
+            get
+            {
+                if (_ApplicationsRepository == null)
+                    _ApplicationsRepository = new Repository<Application>(_context);
+                return _ApplicationsRepository;
+            }
+        }
 
-
-
-
-
-
-
-
+        public IRepository<Company> CompanyRepository
+        {
+            get
+            {
+                if (_CompanyRepository == null)
+                    _CompanyRepository = new Repository<Company>(_context);
+                return _CompanyRepository;
+            }
+        }
 
         private bool disposed = false;
         public void Dispose()
