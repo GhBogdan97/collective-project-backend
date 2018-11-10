@@ -60,7 +60,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("add")]
-        public IActionResult AddInternship(InternshipAddViewModel internship)
+        public ActionResult<InternshipMainAttributesViewModel> AddInternship(InternshipAddViewModel internship)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace API.Controllers
                 var addedInternship = _internshipService.AddInternship(InternshipAddMapper.ToInternship(internship,companyID));
 
 
-                return Ok();
+                return Ok(InternshipMapper.ToViewModel(addedInternship));
             }
             catch (Exception e)
             {
