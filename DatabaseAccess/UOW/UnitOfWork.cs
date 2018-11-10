@@ -13,7 +13,7 @@ namespace DatabaseAccess.UOW
         IRepository<Company> _CompanyRepository;
         IRepository<Internship> _InternshipRepository;
         IRepository<Application> _ApplicationsRepository;
-        IRepository<Company> _CompanyRepository;
+        IRepository<Post> _PostRepository;
 
         public UnitOfWork()
         {
