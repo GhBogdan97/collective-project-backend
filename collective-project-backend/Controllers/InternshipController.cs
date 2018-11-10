@@ -42,16 +42,7 @@ namespace API.Controllers
                     var viewModels = new List<InternshipMainAttributesViewModel>();
                     foreach(var internship in internshipsDB)
                     {
-                        var viewModel = new InternshipMainAttributesViewModel()
-                        {
-                            Id = internship.Id,
-                            Description = internship.Description,
-                            Places = internship.Places,
-                            Topics = internship.Topics,
-                            Weeks = internship.Weeks,
-                            End = internship.End.Date.ToShortDateString(),
-                            Start = internship.Start.Date.ToShortDateString()
-                        };
+                        var viewModel = Mappers.InternshipMapper.ToViewModel(internship);
                         viewModels.Add(viewModel);
                     }
                     return Ok(viewModels);
