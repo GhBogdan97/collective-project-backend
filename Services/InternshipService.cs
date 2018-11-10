@@ -1,4 +1,5 @@
-﻿using DatabaseAccess.Models;
+﻿using DatabaseAccess.DTOs;
+using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -50,6 +51,49 @@ namespace Services
                 if (uow.CompanyRepository.GetById(id) == null)
                     throw new Exception($"Compania cu id-ul {id} nu exista");
                 return uow.InternshipRepository.getDbSet().Where(i => i.CompanyId == id).ToList();
+            }
+        }
+
+        public Internship GetInternshipDetails(int id)
+        {
+            using (var uow = new UnitOfWork())
+            {
+                var internship = uow.InternshipRepository.GetById(id);
+
+                if(internship == null)
+                {
+                    throw new Exception("Internship-ul nu exista!");
+                }
+
+                return internship;
+            }
+        }
+
+        public RatingDTO GetInternshipRatings(int id)
+        {
+            using (var uow = new UnitOfWork())
+            {
+                var ratings = uow.RatingRepository.getDbSet().Where(t=>t.InternshipId==id).ToList();
+
+                if (ratings == null)
+                {
+                    throw new Exception("Nu exista evaluari pentru acest internship!");
+                }
+
+                RatingDTO finalRating = new RatingDTO();
+
+                ratings.ForEach(r =>
+                {
+                    finalRating.RatingCompany += r.RatingCompany;
+                    finalRating.RatingInternship += r.RatingInternship;
+                    finalRating.RatingMentors += r.RatingMentors;
+                });
+
+                finalRating.RatingCompany /= (float)ratings.Count;
+                finalRating.RatingInternship /= (float)ratings.Count;
+                finalRating.RatingMentors /= (float)ratings.Count;
+
+                return finalRating;
             }
         }
     }

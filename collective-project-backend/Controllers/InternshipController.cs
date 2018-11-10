@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Mappers;
 using API.ViewModels;
 using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
@@ -65,7 +66,7 @@ namespace API.Controllers
 
 
         [HttpPut]
-        public IActionResult updateInternship(Internship internship)
+        public IActionResult UpdateInternship(Internship internship)
         {
             try
             {
@@ -76,6 +77,26 @@ namespace API.Controllers
                 return BadRequest(e.Message);
             }
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("details/{id}")]
+        [Authorize(Roles="Company,Student")]
+        public ActionResult<InternshipDetailsRatingViewModel> GetInternshipById(int id)
+        {
+            try
+            {
+                var internship = _internshipService.GetInternshipDetails(id);
+                var ratingDTO = _internshipService.GetInternshipRatings(id);
+                var internshipDetailsRating = InternshipDetailsRatingMapper.ToInternshipDetailsRating(internship, ratingDTO);
+                return Ok(internshipDetailsRating);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }
