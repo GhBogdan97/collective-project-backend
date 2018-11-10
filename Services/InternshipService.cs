@@ -55,16 +55,17 @@ namespace Services
         }
     
 
-        public void AddInternship(Internship internship)
+        public Internship AddInternship(Internship internship)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
                 if (uow.CompanyRepository.GetById(internship.CompanyId) == null)
                 {
-                    throw new Exception("There is no company with id = " + internship.CompanyId);
+                    throw new Exception($"Compania cu id-ul {internship.Id} nu exista");
                 }
                 uow.InternshipRepository.AddEntity(internship);
                 uow.Save();
+                return internship;
             }
         }
 

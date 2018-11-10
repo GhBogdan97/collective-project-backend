@@ -30,11 +30,10 @@ namespace API.Controllers
         public ActionResult<List<ApplicationsPerYearViewModel>> GetApplicationsPerYear(int id)
         {
 
-            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
-            if (claim == null)
+            var userID = User.GetUserId();
+            if (userID == string.Empty)
                 return BadRequest("Compania nu a fost recunoscuta");
             
-            var userId = claim.Value;
             var applicationsPerYear = new List<ApplicationsPerYearViewModel>();
             IList<Internship> internships = null;
 

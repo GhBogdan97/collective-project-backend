@@ -32,16 +32,15 @@ namespace API.Controllers
         [Authorize(Roles="Company")]
         public IActionResult GetAllInternships()
         {
-            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
-            if(claim!=null)
+            var userId = User.GetUserId();
+            if (userId != string.Empty)
             {
-                var userId = claim.Value;
                 try
                 {
                     var companyId = _companyService.GetCompanyIdForUser(userId);
                     var internshipsDB = _internshipService.GetInternshipsForCompany(companyId);
                     var viewModels = new List<InternshipMainAttributesViewModel>();
-                    foreach(var internship in internshipsDB)
+                    foreach (var internship in internshipsDB)
                     {
                         var viewModel = new InternshipMainAttributesViewModel()
                         {
@@ -57,27 +56,37 @@ namespace API.Controllers
                     }
                     return Ok(viewModels);
 
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     return BadRequest(ex.Message);
                 }
-                
+
             }
             return BadRequest("Compania nu a fost recunoscuta");
         }
 
+        
 
         [HttpPost]
         [Route("add")]
-        public IActionResult AddInternship(Internship internship)
+        public IActionResult AddInternship(InternshipAddViewModel internship)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
-                if (!ModelState.IsValid)
+                var userID = User.GetUserId();
+                if(userID==string.Empty)
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest("Compania nu a fost recunoscuta");
                 }
-                _internshipService.AddInternship(internship);
+                var companyID = _companyService.GetCompanyIdForUser(userID);
+                var addedInternship = _internshipService.AddInternship(InternshipAddMapper.ToInternship(internship,companyID));
+
+
                 return Ok();
             }
             catch (Exception e)
@@ -121,5 +130,7 @@ namespace API.Controllers
             }
 
         }
+
+       
     }
 }
