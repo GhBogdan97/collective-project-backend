@@ -53,10 +53,8 @@ namespace Services
                 {
                     throw new Exception("Nu exista companie pentru acest user");
                 }
-                else
-                {
-                    return company.Id;
-                }
+              
+                return company.Id;
             }
         }
     }
