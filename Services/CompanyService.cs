@@ -57,11 +57,6 @@ namespace Services
                 return company.Id;
             }
         }
-    }
-}
-
-      
-
         public int CountCompanies()
         {
             using (UnitOfWork uow = new UnitOfWork())
@@ -69,6 +64,12 @@ namespace Services
                 return uow.CompanyRepository.GetAll().Count();
             }
         }
+    }
+}
+
+      
+
+     
 
 
 
