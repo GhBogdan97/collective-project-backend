@@ -10,12 +10,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
+
 namespace API.Controllers
 {
     [Route("internships")]
     [ApiController]
     public class InternshipController : ControllerBase
     {
+
         private readonly InternshipService _internshipService;
         private readonly CompanyService _companyService;
 
@@ -64,6 +66,27 @@ namespace API.Controllers
             return BadRequest("Compania nu a fost recunoscuta");
         }
 
+
+        [HttpPost]
+        [Route("add")]
+        public IActionResult AddInternship(Internship internship)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                _internshipService.AddInternship(internship);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+
+        }
+    
 
         [HttpPut]
         public IActionResult UpdateInternship(Internship internship)

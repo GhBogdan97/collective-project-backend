@@ -24,10 +24,10 @@ namespace API.Controllers
             _internshipService = internshipService;
             _companyService = companyService;
         }
-
+      
         [HttpGet]
-        [Route("evolution")]
-        public IActionResult GetApplicationsPerYear()
+        [Route("{id}")]
+        public ActionResult<List<ApplicationsPerYearViewModel>> GetApplicationsPerYear(int id)
         {
 
             var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
