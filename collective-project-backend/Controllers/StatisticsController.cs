@@ -31,34 +31,42 @@ namespace API.Controllers
         }
       
         [HttpGet]
-        [Route("{id}")]
-        public ActionResult<List<ApplicationsPerYearViewModel>> GetApplicationsPerYear(int id)
+        [Route("evolution")]
+        public ActionResult<IList<ApplicationsPerYearViewModel>> GetApplicationsPerYear()
         {
+
+            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
+            if (claim == null)
+                return BadRequest("Compania nu a fost recunoscuta");
+            
+            var userId = claim.Value;
             var applicationsPerYear = new List<ApplicationsPerYearViewModel>();
             IList<Internship> internships = null;
 
             try
             {
-               internships = _internshipService.GetInternshipsForCompany(id);
+                var id = _companyService.GetCompanyIdForUser(userId);
+                internships = _internshipService.GetInternshipsForCompany(id);
+                var years = internships.Select(i => i.Start.Year).Distinct().ToList();
+                foreach (var year in years)
+                {
+                    int nrApplications = _statisticsService.GetNrApplicationsPerYear(id, year);
+                    ApplicationsPerYearViewModel viewModel = new ApplicationsPerYearViewModel()
+                    {
+                        Year = year,
+                        NumberOfStudents = nrApplications
+                    };
+                    applicationsPerYear.Add(viewModel);
+                };
 
-            }catch(Exception ex)
+                return Ok(applicationsPerYear);
+
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }
 
-            var years = internships.Select(i =>  i.Start.Year).Distinct().ToList();
-            foreach(var year in years)
-            {
-                int nrApplications=_statisticsService.GetNrApplicationsPerYear(id, year);
-                ApplicationsPerYearViewModel viewModel = new ApplicationsPerYearViewModel()
-                {
-                    Year = year,
-                    NumberOfStudent = nrApplications
-                };
-            applicationsPerYear.Add(viewModel);
-            };
-           
-            return Ok(applicationsPerYear);
         }
 
         [HttpGet]

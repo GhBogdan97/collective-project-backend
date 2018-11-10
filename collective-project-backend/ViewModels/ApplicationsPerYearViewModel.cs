@@ -8,6 +8,6 @@ namespace API.ViewModels
     public class ApplicationsPerYearViewModel
     {
         public int Year { get; set; }
-        public int NumberOfStudent { get; set; }
+        public int NumberOfStudents { get; set; }
     }
 }
