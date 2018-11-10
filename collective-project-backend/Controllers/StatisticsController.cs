@@ -26,8 +26,8 @@ namespace API.Controllers
         }
       
         [HttpGet]
-        [Route("{id}")]
-        public ActionResult<List<ApplicationsPerYearViewModel>> GetApplicationsPerYear(int id)
+        [Route("evolution")]
+        public ActionResult<IList<ApplicationsPerYearViewModel>> GetApplicationsPerYear()
         {
 
             var userID = User.GetUserId();

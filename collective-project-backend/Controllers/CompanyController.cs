@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllCompanies()
+        public ActionResult<IList<Company>> GetAllCompanies()
         {
             return Ok(_companyService.GetAllCompanies());
         }
