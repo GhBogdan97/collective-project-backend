@@ -1,13 +1,16 @@
 ﻿using DatabaseAccess.Data;
 using DatabaseAccess.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Services;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Threading.Tasks;
 
 namespace collective_project_backend
 {
@@ -29,6 +32,25 @@ namespace collective_project_backend
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddAuthentication(options =>
+            {
+            }).AddCookie(options =>
+             {
+                 options.Cookie.Name = "auth_cookie";
+                 options.Cookie.SameSite = SameSiteMode.None;
+                 options.Events = new CookieAuthenticationEvents
+                 {
+                     OnRedirectToLogin = redirectContext =>
+                     {
+                         redirectContext.HttpContext.Response.StatusCode = 401;
+                         return Task.CompletedTask;
+                     }
+                 };
+             });
+
+            services.AddCors();
+
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
@@ -38,6 +60,7 @@ namespace collective_project_backend
             services.AddTransient<InternshipService>();
             services.AddTransient<CompanyService>();
             services.AddTransient<StatisticsService>();
+         
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -59,6 +82,14 @@ namespace collective_project_backend
             {
                 app.UseExceptionHandler();
             }
+
+            app.UseCors(policy =>
+            {
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+                policy.AllowAnyOrigin();
+                policy.AllowCredentials();
+            });
 
             app.UseStaticFiles();
 
