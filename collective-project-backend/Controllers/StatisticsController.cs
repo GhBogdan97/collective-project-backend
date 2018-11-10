@@ -46,7 +46,7 @@ namespace API.Controllers
                 ApplicationsPerYearViewModel viewModel = new ApplicationsPerYearViewModel()
                 {
                     Year = year,
-                    NumberOfStudent = nrApplications
+                    NumberOfStudents = nrApplications
                 };
             applicationsPerYear.Add(viewModel);
             };

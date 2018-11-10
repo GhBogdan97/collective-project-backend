@@ -53,13 +53,15 @@ namespace collective_project_backend.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByNameAsync(model.Email);
-                    var roles = _userManager.GetRolesAsync(user).Result.ToList()[0];
+                    var role = _userManager.GetRolesAsync(user).Result.ToList()[0];
                     _logger.LogInformation("User logged in.");
-                    return Ok(roles);
+                    
+                    return Ok(role);
+                   
                 }
                 else
                 {
-                    return Unauthorized();
+                    return BadRequest("Autentificarea nu s-a finalizat cu succes");
                 }
             }
 
