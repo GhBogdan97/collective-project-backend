@@ -16,11 +16,18 @@ namespace API.Controllers
     {
         private readonly StatisticsService _statisticsService;
         private readonly InternshipService _internshipService;
+        private readonly StudentService _studentService;
+        private readonly CompanyService _companyService;
 
-        public StatisticsController(StatisticsService statisticsService, InternshipService internshipService)
+        public StatisticsController(StatisticsService statisticsService,
+                                    InternshipService internshipService,
+                                    StudentService studentService,
+                                    CompanyService companyService)
         {
             _statisticsService = statisticsService;
             _internshipService = internshipService;
+            _studentService = studentService;
+            _companyService= companyService;
         }
       
         [HttpGet]
@@ -52,6 +59,19 @@ namespace API.Controllers
             };
            
             return Ok(applicationsPerYear);
+        }
+
+        [HttpGet]
+        [Route("general")]
+        public ActionResult<GeneralStatisticsViewModel> GetGeneralStatistics()
+        {
+            var generalStatisticsViewModel = new GeneralStatisticsViewModel()
+            {
+                NumberOfCompanies = _companyService.CountCompanies(),
+                NumberOfStudents = _studentService.CountStudents(),
+                NumberOfInternships = _internshipService.CountInternships()
+            };
+            return Ok(generalStatisticsViewModel);
         }
     }
 }

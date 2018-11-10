@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
@@ -42,6 +43,14 @@ namespace Services
                
                 uow.CompanyRepository.UpdateEntity(companyDb);
                 uow.Save();
+            }
+        }
+
+        public int CountCompanies()
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.CompanyRepository.GetAll().Count();
             }
         }
 

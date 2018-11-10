@@ -77,5 +77,13 @@ namespace Services
                     .ToList();
             }
         }
+
+        public int CountInternships()
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.InternshipRepository.GetAll().Count();
+            }
+        }
     }
 }
