@@ -42,5 +42,19 @@ namespace Services
                 uow.Save();
             }
         }
+    
+
+        public void AddInternship(Internship internship)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                if (uow.CompanyRepository.GetById(internship.CompanyId) == null)
+                {
+                    throw new Exception("There is no company with id = " + internship.CompanyId);
+                }
+                uow.InternshipRepository.AddEntity(internship);
+                uow.Save();
+            }
+        }
     }
 }
