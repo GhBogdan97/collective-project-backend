@@ -60,6 +60,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("add")]
+        [Authorize(Roles = "Company")]
         public ActionResult<InternshipMainAttributesViewModel> AddInternship(InternshipAddViewModel internship)
         {
             if (!ModelState.IsValid)
