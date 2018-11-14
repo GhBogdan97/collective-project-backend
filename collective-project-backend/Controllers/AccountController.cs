@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using DatabaseAccess.Models;
 using collective_project_backend.ViewModels.AccountViewModels;
 using Services;
+using API.ViewModels;
 
 namespace collective_project_backend.Controllers
 {
@@ -55,8 +56,9 @@ namespace collective_project_backend.Controllers
                     var user = await _userManager.FindByNameAsync(model.Email);
                     var role = _userManager.GetRolesAsync(user).Result.ToList()[0];
                     _logger.LogInformation("User logged in.");
-                    
-                    return Ok(role);
+                    var roleViewModel = new UserRoleViewModel { Role = role };
+
+                    return Ok(roleViewModel);
                    
                 }
                 else
@@ -76,7 +78,8 @@ namespace collective_project_backend.Controllers
             var claims = User.Claims.FirstOrDefault(c => c.Type.Contains("role"));
             if (claims == null)
                 return Ok(null);
-            return Ok(claims.Value);
+            var role = new UserRoleViewModel { Role = claims.Value };
+            return Ok(role);
         }
 
         [HttpPost]
