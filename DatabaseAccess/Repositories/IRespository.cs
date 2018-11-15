@@ -20,5 +20,7 @@ namespace DatabaseAccess.Repositories
         void DeleteEntity(TEntity entity);
 
         void UpdateEntity(TEntity entity);
+
+        IQueryable<TEntity> getDbSet();
     }
 }

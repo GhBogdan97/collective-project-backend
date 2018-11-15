@@ -43,8 +43,7 @@ namespace collective_project_backend.Controllers
         [HttpPost]
         [Route("login")]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login([FromBody]LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -53,12 +52,16 @@ namespace collective_project_backend.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByNameAsync(model.Email);
+                    var role = _userManager.GetRolesAsync(user).Result.ToList()[0];
                     _logger.LogInformation("User logged in.");
-                    return Ok();
+                    
+                    return Ok(role);
+                   
                 }
                 else
                 {
-                    return Unauthorized();
+                    return BadRequest("Autentificarea nu s-a finalizat cu succes");
                 }
             }
 
@@ -66,11 +69,19 @@ namespace collective_project_backend.Controllers
             return BadRequest(model);
         }
 
-        
+        [HttpGet]
+        [Route("role")]
+        public IActionResult GetRole()
+        {
+            var claims = User.Claims.FirstOrDefault(c => c.Type.Contains("role"));
+            if (claims == null)
+                return Ok(null);
+            return Ok(claims.Value);
+        }
+
         [HttpPost]
         [Route("register")]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
@@ -86,8 +97,7 @@ namespace collective_project_backend.Controllers
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation("User created a new account with password.");
-                    return Ok();
+                    return Ok(User.Claims.First(c => c.Type.Contains("role")).Value);
                 }
                 AddErrors(result);
             }
@@ -98,7 +108,6 @@ namespace collective_project_backend.Controllers
 
         [HttpPost]
         [Route("logout")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -108,6 +117,7 @@ namespace collective_project_backend.Controllers
 
 
         [HttpGet]
+        [Route("confirm-email")]
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
@@ -127,12 +137,11 @@ namespace collective_project_backend.Controllers
                 return BadRequest();
         }
 
-     
+
 
         [HttpPost]
         [Route("forgot-password")]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
@@ -158,21 +167,22 @@ namespace collective_project_backend.Controllers
         }
 
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
-        {
-            if (code == null)
-            {
-                throw new ApplicationException("A code must be supplied for password reset.");
-            }
-            var model = new ResetPasswordViewModel { Code = code };
-            return Ok(model);
-        }
+        //[HttpGet]
+        //[Route("reset-password")]
+        //[AllowAnonymous]
+        //public IActionResult ResetPassword(string code = null)
+        //{
+        //    if (code == null)
+        //    {
+        //        throw new ApplicationException("A code must be supplied for password reset.");
+        //    }
+        //    var model = new ResetPasswordViewModel { Code = code };
+        //    return Ok(model);
+        //}
 
         [HttpPost]
+        [Route("reset-password")]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -204,7 +214,7 @@ namespace collective_project_backend.Controllers
             }
         }
 
-       
+
         #endregion
     }
 }

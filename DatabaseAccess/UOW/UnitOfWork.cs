@@ -10,15 +10,28 @@ namespace DatabaseAccess.UOW
         private readonly ApplicationDbContext _context;
 
         IRepository<Student> _StudentRepository;
+        IRepository<Company> _CompanyRepository;
+        IRepository<Internship> _InternshipRepository;
 		IRepository<Application> _ApplicationRepository;
-		IRepository<Internship> _InternshipRepository;
+		IRepository<Post> _PostRepository;
 		IRepository<Subscription> _SubscriptionRepository;
-		IRepository<Company> _CompanyRepository;
+
 
 		public UnitOfWork()
         {
             this._context = new DbContextFactory().CreateDbContext(new string[] { });
         }
+
+        public IRepository<Internship> InternshipRepository
+        {
+            get
+            {
+                if (_InternshipRepository == null)
+                    _InternshipRepository = new Repository<Internship>(_context);
+                return _InternshipRepository;
+            }
+        }
+    
 
         public IRepository<Student> StudentRepository
         {
@@ -65,6 +78,15 @@ namespace DatabaseAccess.UOW
 		}
 
 
+        public IRepository<Company> CompanyRepository
+        {
+            get
+            {
+                if (_CompanyRepository == null)
+                    _CompanyRepository = new Repository<Company>(_context);
+                return _CompanyRepository;
+            }
+        }
 
 		private bool disposed = false;
         public void Dispose()
