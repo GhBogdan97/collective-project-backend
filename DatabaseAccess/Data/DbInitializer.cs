@@ -180,6 +180,7 @@ namespace DatabaseAccess.Data
                     RatingCompany = 4,
                     RatingInternship = 5,
                     RatingMentors = 5,
+                    Date = new DateTime(2018,05,10),
                     Testimonial = "Cel mai fain internship din toate (1) pe care le-am avut!"
                 },
                 new Rating
@@ -189,6 +190,7 @@ namespace DatabaseAccess.Data
                     RatingCompany = 3,
                     RatingInternship = 3,
                     RatingMentors = 3,
+                    Date = new DateTime(2018,07,23),
                     Testimonial = "Meh."
                 },
             };
