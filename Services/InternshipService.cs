@@ -19,19 +19,19 @@ namespace Services
                 {
                     throw new Exception("Internship inexistent");
                 }
-                if(internship.Start != DateTime.MinValue)
+                if (internship.Start != DateTime.MinValue)
                 {
                     internshipDb.Start = internship.Start;
                 }
-                if(internship.End != DateTime.MinValue)
+                if (internship.End != DateTime.MinValue)
                 {
                     internshipDb.End = internship.End;
                 }
-                if(internship.Places != 0)
+                if (internship.Places != 0)
                 {
                     internshipDb.Places = internship.Places;
                 }
-                if(internship.Weeks != 0)
+                if (internship.Weeks != 0)
                 {
                     internshipDb.Weeks = internship.Weeks;
                 }
@@ -52,7 +52,7 @@ namespace Services
                 return uow.InternshipRepository.getDbSet().Where(i => i.CompanyId == id).ToList();
             }
         }
-    
+
 
         public void AddInternship(Internship internship)
         {
@@ -64,6 +64,25 @@ namespace Services
                 }
                 uow.InternshipRepository.AddEntity(internship);
                 uow.Save();
+            }
+        }
+
+        public IList<Rating> GetInternshipRatings(int id)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.RatingRepository.getDbSet()
+                    .Include(r=>r.Student)
+                    .Where(r => r.InternshipId == id)
+                    .ToList();
+            }
+        }
+
+        public int CountInternships()
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.InternshipRepository.GetAll().Count();
             }
         }
     }

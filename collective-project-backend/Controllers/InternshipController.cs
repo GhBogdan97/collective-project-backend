@@ -91,5 +91,25 @@ namespace API.Controllers
             }
             return Ok();
         }
+
+        [HttpGet]
+        [Route("{id}/testimonials")]
+        public ActionResult<TestimonialViewModel> GetTestimonialForInternship(int id)
+        {
+            var ratings = _internshipService.GetInternshipRatings(id);
+            var testimonials = new List<TestimonialViewModel>();
+            foreach(var rating in ratings)
+            {
+                var testimonial = new TestimonialViewModel()
+                {
+                    Firstname = rating.Student.Firstname,
+                    Lastname = rating.Student.Lastname,
+                    Testimonial = rating.Testimonial,
+                    Date = rating.Date.Date.ToShortDateString()
+                };
+                testimonials.Add(testimonial);
+            }
+            return Ok(testimonials);
+        }
     }
 }
