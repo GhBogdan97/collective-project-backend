@@ -37,7 +37,7 @@ namespace collective_project_backend
             {
             }).AddCookie(options =>
              {
-                 options.Cookie.Name = "auth_cookie";
+                 //options.Cookie.Name = "auth_cookie";
                  options.Cookie.SameSite = SameSiteMode.None;
                  options.Events = new CookieAuthenticationEvents
                  {
@@ -48,6 +48,11 @@ namespace collective_project_backend
                      }
                  };
              });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = false;
+            });
 
             services.AddCors();
 
