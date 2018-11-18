@@ -20,11 +20,13 @@ namespace API.Controllers
 
         private readonly InternshipService _internshipService;
         private readonly CompanyService _companyService;
+        private readonly PostService _postService;
 
-        public InternshipController(InternshipService internshipService, CompanyService companyService)
+        public InternshipController(InternshipService internshipService, CompanyService companyService, PostService postService)
         {
             _internshipService = internshipService;
             _companyService = companyService;
+            _postService = postService;
         }
 
 
@@ -87,13 +89,32 @@ namespace API.Controllers
 
         }
     
-
+        [Route("{id:int}")]
         [HttpPut]
-        public IActionResult UpdateInternship(Internship internship)
+        [Authorize(Roles = "Company")]
+        public IActionResult updateInternship([FromBody] InternshipMainAttributesViewModel internshipView, int id)
         {
             try
             {
-                _internshipService.UpdateInternship(internship);
+                var internship = InternshipMapper.ToActualInternshipObject(internshipView);
+                _internshipService.UpdateInternship(internship, id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
+
+        [Route("{id:int}/posts")]
+        [HttpPost]
+        [Authorize(Roles = "Company")]
+        public IActionResult SavePost([FromBody] PostViewModel postView, int id)
+        {
+            try
+            {
+                var post = PostMapper.ToActualPostObject(postView, id);
+                _postService.SavePost(post);
             }
             catch (Exception e)
             {
