@@ -10,11 +10,11 @@ namespace Services
 {
     public class InternshipService
     {
-        public void UpdateInternship(Internship internship)
+        public void UpdateInternship(Internship internship, int id)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
-                var internshipDb = uow.InternshipRepository.GetById(internship.Id);
+                var internshipDb = uow.InternshipRepository.GetById(id);
                 if (internshipDb == null)
                 {
                     throw new Exception("Internship inexistent");
