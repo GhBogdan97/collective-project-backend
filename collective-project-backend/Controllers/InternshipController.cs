@@ -21,14 +21,64 @@ namespace API.Controllers
         private readonly InternshipService _internshipService;
         private readonly CompanyService _companyService;
         private readonly PostService _postService;
+        private readonly StudentService _studentService;
 
-        public InternshipController(InternshipService internshipService, CompanyService companyService, PostService postService)
+        public InternshipController(StudentService studentService, InternshipService internshipService, CompanyService companyService, PostService postService)
         {
             _internshipService = internshipService;
             _companyService = companyService;
             _postService = postService;
+            _studentService = studentService;
         }
 
+        [Route("{id:int}")]
+        [HttpGet]
+        public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent(int id)
+        {
+            try
+            {
+                var internshipsDb = _internshipService.GetInternshipsForStudent(id);
+                var viewModels = new List<InternshipMainAttributesViewModel>();
+                foreach (var internship in internshipsDb)
+                {
+                    var viewModel = InternshipMapper.ToViewModel(internship);
+                    viewModels.Add(viewModel);
+                }
+                return Ok(viewModels);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpGet]
+        [Authorize(Roles ="Student")]
+        public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
+        {
+            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
+            if (claim != null)
+            {
+                var userId = claim.Value;
+                try
+                {
+                    var studentId = _studentService.GetStudentIdForUser(userId);
+                    var posts = _postService.GetPostsForInternship(studentId);
+                    var postViewModels = new List<PostViewModel>();
+                    foreach (var post in posts)
+                    {
+                        var postModel = PostMapper.ToPostViewModel(post);
+                        postViewModels.Add(postModel);
+                    }
+                    return Ok(postViewModels);
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest("Studentul nu a fost recunoscut");
+        }
 
         [HttpGet]
         [Authorize(Roles="Company")]
@@ -84,7 +134,7 @@ namespace API.Controllers
         [Route("{id:int}")]
         [HttpPut]
         [Authorize(Roles = "Company")]
-        public IActionResult updateInternship([FromBody] InternshipMainAttributesViewModel internshipView, int id)
+        public IActionResult UpdateInternship([FromBody] InternshipMainAttributesViewModel internshipView, int id)
         {
             try
             {

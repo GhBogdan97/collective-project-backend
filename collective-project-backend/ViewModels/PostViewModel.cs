@@ -13,7 +13,5 @@ namespace API.ViewModels
         public string Title { get; set; }
         public bool Last { get; set; }
         public byte[] Image { get; set; }
-
-        public int InternshipId { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace Services
+namespace BloodPlus.Services
 {
     // This class is used by the application to send email for account confirmation and password reset.
     // For more details see https://go.microsoft.com/fwlink/?LinkID=532713
@@ -28,7 +28,7 @@ namespace Services
                 UseDefaultCredentials = false,
                 Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
             };
-            using (var mailMessage = new MailMessage(fromAddress, toAddress)
+            using (var mailMessage= new MailMessage(fromAddress, toAddress)
             {
                 Subject = subject,
                 Body = body
