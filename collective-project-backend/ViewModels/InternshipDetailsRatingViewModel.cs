@@ -8,7 +8,7 @@ namespace API.ViewModels
 {
     public class InternshipDetailsRatingViewModel
     {
-        public Internship Internship { get; set; }
+        public InternshipMainAttributesViewModel Internship { get; set; }
 
         public float RatingInternship { get; set; }
 

@@ -14,7 +14,16 @@ namespace API.Mappers
         {
             return new InternshipDetailsRatingViewModel
             {
-                Internship = internship,
+                Internship = new InternshipMainAttributesViewModel
+                {
+                    Description = internship.Description,
+                    End = internship.End.Date.ToShortDateString(),
+                    Start = internship.Start.Date.ToShortDateString(),
+                    Places = internship.Places,
+                    Id = internship.Id,
+                    Topics = internship.Topics,
+                    Weeks = internship.Weeks
+                },
                 RatingCompany = ratingDTO.RatingCompany,
                 RatingInternship = ratingDTO.RatingInternship,
                 RatingMentors = ratingDTO.RatingMentors
