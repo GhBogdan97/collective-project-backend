@@ -57,10 +57,19 @@ namespace Services
                 return company.Id;
             }
         }
+        public int CountCompanies()
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.CompanyRepository.GetAll().Count();
+            }
+        }
     }
 }
 
       
+
+     
 
 
 

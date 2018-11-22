@@ -22,5 +22,18 @@ namespace API.Mappers
                 Start = internship.Start.Date.ToShortDateString()
             };
         }
+
+        public static Internship ToActualInternshipObject(InternshipMainAttributesViewModel internshipView)
+        {
+            return new Internship()
+            {
+                Description = internshipView.Description,
+                Places = internshipView.Places,
+                Topics = internshipView.Topics,
+                Start = DateTime.Parse(internshipView.Start),
+                End = DateTime.Parse(internshipView.End),
+                Weeks = internshipView.Weeks
+            };
+        }
     }
 }

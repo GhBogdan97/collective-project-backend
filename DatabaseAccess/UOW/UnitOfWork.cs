@@ -12,9 +12,9 @@ namespace DatabaseAccess.UOW
         IRepository<Student> _StudentRepository;
         IRepository<Company> _CompanyRepository;
         IRepository<Internship> _InternshipRepository;
-		IRepository<Application> _ApplicationRepository;
-		IRepository<Post> _PostRepository;
-		IRepository<Subscription> _SubscriptionRepository;
+        IRepository<Application> _ApplicationsRepository;
+        IRepository<Post> _PostRepository;
+        IRepository<Rating> _RatingRepository;
 
 
 		public UnitOfWork()
@@ -76,7 +76,7 @@ namespace DatabaseAccess.UOW
 			}
 		}
 
-		private bool disposed = false;
+        private bool disposed = false;
         public void Dispose()
         {
             Dispose(true);

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DatabaseAccess.Models
 {
@@ -18,6 +19,8 @@ namespace DatabaseAccess.Models
         public int RatingMentors { get; set; }
 
         public string Testimonial { get; set; } 
+
+        public DateTime Date { get; set; }
 
     }
 }
