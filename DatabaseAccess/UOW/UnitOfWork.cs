@@ -22,17 +22,6 @@ namespace DatabaseAccess.UOW
             this._context = new DbContextFactory().CreateDbContext(new string[] { });
         }
 
-        public IRepository<Internship> InternshipRepository
-        {
-            get
-            {
-                if (_InternshipRepository == null)
-                    _InternshipRepository = new Repository<Internship>(_context);
-                return _InternshipRepository;
-            }
-        }
-    
-
         public IRepository<Student> StudentRepository
         {
             get
@@ -48,6 +37,16 @@ namespace DatabaseAccess.UOW
 				if (_ApplicationRepository == null)
 					_ApplicationRepository = new Repository<Application>(_context);
 				return _ApplicationRepository;
+			}
+		}
+
+		public IRepository<Post> PostRepository
+		{
+			get
+			{
+				if (_PostRepository == null)
+					_PostRepository = new Repository<Post>(_context);
+				return _PostRepository;
 			}
 		}
 
@@ -76,17 +75,6 @@ namespace DatabaseAccess.UOW
 				return _CompanyRepository;
 			}
 		}
-
-
-        public IRepository<Company> CompanyRepository
-        {
-            get
-            {
-                if (_CompanyRepository == null)
-                    _CompanyRepository = new Repository<Company>(_context);
-                return _CompanyRepository;
-            }
-        }
 
 		private bool disposed = false;
         public void Dispose()
