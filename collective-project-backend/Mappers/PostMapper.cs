@@ -20,5 +20,16 @@ namespace API.Mappers
                 Image = postView.Image
             };
         }
+
+        public static PostViewModel ToPostViewModel(Post post)
+        {
+            return new PostViewModel()
+            {
+                Date = post.Date.ToString(),
+                Title = post.Title,
+                Last = post.Last,
+                Image = post.Image
+            };
+        }
     }
 }
