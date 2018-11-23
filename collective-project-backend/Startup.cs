@@ -33,21 +33,28 @@ namespace collective_project_backend
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication(options =>
+            //services.AddAuthentication(options =>
+            //{
+            //}).AddCookie(options =>
+            // {
+            //     options.Cookie.Name = "auth_cookie";
+            //     options.Cookie.SameSite = SameSiteMode.None;
+            //     options.Events = new CookieAuthenticationEvents
+            //     {
+            //         OnRedirectToLogin = redirectContext =>
+            //         {
+            //             redirectContext.HttpContext.Response.StatusCode = 401;
+            //             return Task.CompletedTask;
+            //         }
+            //     };
+            // });
+            services.ConfigureApplicationCookie(options =>
             {
-            }).AddCookie(options =>
-             {
-                 options.Cookie.Name = "auth_cookie";
-                 options.Cookie.SameSite = SameSiteMode.None;
-                 options.Events = new CookieAuthenticationEvents
-                 {
-                     OnRedirectToLogin = redirectContext =>
-                     {
-                         redirectContext.HttpContext.Response.StatusCode = 401;
-                         return Task.CompletedTask;
-                     }
-                 };
-             });
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                options.Cookie.Name = "Identity";
+                options.Cookie.HttpOnly = false;
+            });
 
             services.AddCors();
 

@@ -62,7 +62,7 @@ namespace API.Controllers
         
         [HttpGet]
         [Route("{id:int}/posts")]
-        public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
+        public ActionResult<PostObjectViewModels> GetPostsForInternship(int id)
         {
             try
             {
@@ -73,7 +73,11 @@ namespace API.Controllers
                     var postModel = PostMapper.ToPostViewModel(post);
                     postViewModels.Add(postModel);
                 }
-                return Ok(postViewModels);
+                var postObjects = new PostObjectViewModels()
+                {
+                    Posts = postViewModels
+                };
+                return Ok(postObjects);
             }
             catch (Exception ex)
             {
