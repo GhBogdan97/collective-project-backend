@@ -15,6 +15,7 @@ namespace API.Controllers
 {
     [Route("internships")]
     [ApiController]
+    [Authorize]
     public class InternshipController : ControllerBase
     {
 
