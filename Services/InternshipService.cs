@@ -1,5 +1,6 @@
 ﻿using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,22 @@ namespace Services
 {
     public class InternshipService
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public InternshipService(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
         public void UpdateInternship(Internship internship, int id)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
-                var internshipDb = uow.InternshipRepository.GetById(id);
+                var internshipDb = uow.InternshipRepository.getDbSet()
+                    .Where(i => i.Id == id)
+                    .Include(i => i.Applications)
+                    .FirstOrDefault();
+
                 if (internshipDb == null)
                 {
                     throw new Exception("Internship inexistent");
@@ -37,8 +49,18 @@ namespace Services
                 }
                 internshipDb.Topics = internship.Topics ?? internshipDb.Topics;
                 internshipDb.Description = internship.Description ?? internshipDb.Description;
-
                 uow.InternshipRepository.UpdateEntity(internshipDb);
+
+                foreach (var application in internshipDb.Applications)
+                {
+                    var student = uow.StudentRepository.GetById(application.StudentId);
+
+                    var user = _userManager.FindByIdAsync(student.IdUser).Result;
+
+                    var emailSender = new EmailSender();
+                    emailSender.SendEmailAsync(user.Email, "Internship update ", "Internship " + internship.Description + " was updated! Check it out on by clicking the following link: http://localhost:8080/");
+
+                }
                 uow.Save();
             }
         }
@@ -53,16 +75,51 @@ namespace Services
             }
         }
 
+        public IList<Internship> GetInternshipsForStudent(int id)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var student = uow.StudentRepository.getDbSet()
+                    .Where(s => s.Id == id)
+                    .Include(s => s.Applications)
+                    .FirstOrDefault();
+
+                if (uow.StudentRepository.GetById(id) == null)
+                    throw new Exception($"Studentul cu id-ul {id} nu exista");
+
+                List<Internship> internships = new List<Internship>();
+                foreach(var application in student.Applications)
+                {
+                    var internship = uow.InternshipRepository.GetById(application.InternshipId);
+                    internships.Add(internship);
+                }
+                return internships;
+            }
+        }
+
 
         public void AddInternship(Internship internship)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
-                if (uow.CompanyRepository.GetById(internship.CompanyId) == null)
+                var company = uow.CompanyRepository.getDbSet()
+                    .Where(c => c.Id == internship.CompanyId)
+                    .Include(c => c.Subscriptions)
+                    .FirstOrDefault();
+
+                if (company == null)
                 {
                     throw new Exception("There is no company with id = " + internship.CompanyId);
                 }
                 uow.InternshipRepository.AddEntity(internship);
+
+                foreach(var subscription in company.Subscriptions)
+                {
+                    var student = uow.StudentRepository.GetById(subscription.StudentId);
+                    var user = _userManager.FindByIdAsync(student.IdUser).Result;
+                    var emailSender = new EmailSender();
+                    emailSender.SendEmailAsync(user.Email, "New internship!", "A new internship has been added for " + company.Name + "! Check more about it here: http://localhost:8080/");
+                }
                 uow.Save();
             }
         }
