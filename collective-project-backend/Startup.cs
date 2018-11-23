@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DatabaseAccess.Data;
+using DatabaseAccess.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using collective_project_backend.Data;
-using collective_project_backend.Models;
-using collective_project_backend.Services;
+using Services;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Threading.Tasks;
 
 namespace collective_project_backend
 {
@@ -27,16 +27,46 @@ namespace collective_project_backend
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(DatabaseAccess.Configuration.ConnectionString));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthentication(options =>
+            {
+            }).AddCookie(options =>
+             {
+                 options.Cookie.Name = "auth_cookie";
+                 options.Cookie.SameSite = SameSiteMode.None;
+                 options.Events = new CookieAuthenticationEvents
+                 {
+                     OnRedirectToLogin = redirectContext =>
+                     {
+                         redirectContext.HttpContext.Response.StatusCode = 401;
+                         return Task.CompletedTask;
+                     }
+                 };
+             });
+
+            services.AddCors();
+
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
+            services.AddTransient<StudentService>();
+            services.AddTransient<PostService>();
+            services.AddTransient<InternshipService>();
+            services.AddTransient<CompanyService>();
+            services.AddTransient<StatisticsService>();
+         
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "InterLink API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,18 +80,32 @@ namespace collective_project_backend
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler();
             }
+
+            app.UseCors(policy =>
+            {
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+                policy.AllowAnyOrigin();
+                policy.AllowCredentials();
+            });
 
             app.UseStaticFiles();
 
             app.UseAuthentication();
 
-            app.UseMvc(routes =>
+            app.UseMvc();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                c.SwaggerEndpoint("swagger/v1/swagger.json", "InterLink API V1");
+                c.RoutePrefix = string.Empty;
             });
         }
     }
