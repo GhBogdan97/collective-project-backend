@@ -8,12 +8,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using DatabaseAccess.Models;
+using API.ViewModels;
+using API.Mappers;
+using collective_project_backend.Controllers;
+using Microsoft.AspNetCore.Identity;
+using collective_project_backend.ViewModels.AccountViewModels;
 
 namespace API.Controllers
 {
 	[Route("students")]
 	[ApiController]
-	[Authorize]
 	public class StudentController : ControllerBase
 	{
 		private readonly StudentService _studentService;
@@ -21,148 +25,153 @@ namespace API.Controllers
 		private readonly InternshipService _internshipService;
 		private readonly SubscriptionService _subscriptionService;
 
+		private readonly UserManager<ApplicationUser> _userManager;
+		private readonly RoleManager<IdentityRole> _roleManager;
+
 		public StudentController(StudentService studentService, ApplicationService applicationService,
-			InternshipService internshipService, SubscriptionService subscriptionService)
+			InternshipService internshipService, SubscriptionService subscriptionService,
+			UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
 		{
 			_studentService = studentService;
 			_applicationService = applicationService;
 			_internshipService = internshipService;
 			_subscriptionService = subscriptionService;
+			_userManager = userManager;
+			_roleManager = roleManager;
 		}
 
-		[HttpGet("getStudents")]
-		public IActionResult GetAllStudents()
+		[HttpGet]
+		[Authorize(Roles = "Company")]
+		public ActionResult<List<StudentViewModel>> GetAllStudents()
 		{
-			return Ok(_studentService.GetAllStudents());
+			return Ok(StudentMapper.GetStudentsViewFrom(_studentService.GetAllStudents()));
 		}
 
-		[HttpGet("getStudentsByInternshipId")]
-		public IActionResult GetStudentsByInternshipId(int InternshipId)
+		[HttpGet]
+		[Route("internship/{InternshipId:int}")]
+		[Authorize(Roles = "Company")]
+		public ActionResult<List<StudentViewModel>> GetStudentsByInternshipId(int InternshipId)
 		{
-			//var InternshipId = Request.Cookies["InternshipId"];
-			var studentIds = _applicationService.GetStudentIdsByInternshipId(InternshipId);
-			var students = _studentService.GetAllStudents();
-			IList<Student> studentsByInternshipId = new List<Student>();
-			foreach (Student student in students)
+			var studentsByInternship = _studentService.GetStudentsByInternshipId(InternshipId);
+			return Ok(StudentMapper.GetStudentsViewFrom(studentsByInternship));
+		}
+
+		[HttpGet]
+		[Route("company/{CompanyId:int}")]
+		[Authorize(Roles = "Company")]
+		public ActionResult<List<StudentViewModel>> GetStudentsByCompanyId(int CompanyId)
+		{
+			var studentsByCompany = _studentService.GetStudentsByInternshipId(CompanyId);
+			return Ok(StudentMapper.GetStudentsViewFrom(studentsByCompany));
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Student")]
+		public async Task<IActionResult> RegisterStudentAsync([FromBody] StudentViewModel studentView)
+		{
+			var student = StudentMapper.ToActualObject(studentView);
+			RegisterViewModel registration = new RegisterViewModel
 			{
-				for (int i = 0; i < studentIds.Count(); i++)
-				{
-					if (student.Id == studentIds[i])
-					{
-						studentsByInternshipId.Add(student);
-					}
-				}
-			}
-			return Ok(studentsByInternshipId);
-		}
+				Email = studentView.Email,
+				Password = studentView.Password,
+				ConfirmPassword = studentView.ConfirmPassword
+			};
 
-		[HttpGet("GetStudentsByCompanyId")]
-		public IActionResult GetStudentsByCompanyId(int CompanyId)
-		{
-			//var CompanyId = Request.Cookies["CompanyId"];
-			var studentIds = _subscriptionService.GetStudentIdsByCompanyId(CompanyId);
-			var students = _studentService.GetAllStudents();
-			IList<Student> studentsByCompanyId = new List<Student>();
-			foreach (Student student in students)
+			IdentityResult result = await _userManager.CreateAsync(new ApplicationUser { Email = registration.Email, UserName = registration.Email }, registration.Password);
+			if (result.Succeeded)
 			{
-				for (int i = 0; i < studentIds.Count(); i++)
-				{
-					if (student.Id == studentIds[i])
-					{
-						studentsByCompanyId.Add(student);
-					}
-				}
+				var studentUserManager = await _userManager.FindByEmailAsync(registration.Email);
+				var roleStudent = await _roleManager.FindByNameAsync("Student");
+				await _userManager.AddToRoleAsync(studentUserManager, roleStudent.Name);
+				student.IdUser = studentUserManager.Id;
+				_studentService.AddStudent(student);
+				return Ok();
 			}
-			return Ok(studentsByCompanyId);
+			return BadRequest();
 		}
 
-		[HttpPost("addStudent")]
-		public IActionResult AddStudent([FromBody] Student student)
+		[HttpPut]
+		[Authorize(Roles = "Student")]
+		public IActionResult UpdateStudent([FromBody] StudentViewModel studentView)
 		{
-			_studentService.AddStudent(student);
+			try
+			{
+				var student = StudentMapper.ToActualObject(studentView);
+				_studentService.UpdateStudent(student);
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e.Message);
+			}
 			return Ok();
 		}
 
-		[HttpPost("updateStudent")]
-		public IActionResult UpdateStudent([FromBody] Student student)
+		[HttpPost]
+		[Route("applications")]
+		[Authorize(Roles = "Student")]
+		public IActionResult AddApplication([FromBody] ApplicationViewModel applicationView)
 		{
 			try
 			{
-				if(!ModelState.IsValid)
-				{
-					return BadRequest(ModelState);
-				}
-				_studentService.UpdateStudent(student);
-				return Ok();
-			}
-			catch (Exception e)
-			{
-				return BadRequest(e);
-			}
-		}
-
-		[HttpPost("addApplication")]
-		public IActionResult AddApplication([FromBody] Application application)
-		{
-			try
-			{
+				var application = ApplicationMapper.ToActualObject(applicationView);
 				_applicationService.AddApplication(application);
-				return Ok();
 			}
 			catch (Exception e)
 			{
 				return BadRequest(e);
 			}
+			return Ok();
 		}
 
-		[HttpPost("updateApplication")]
-		public IActionResult UpdateApplication([FromBody] Application application)
+		[HttpPut]
+		[Route("applications")]
+		[Authorize(Roles = "Student")]
+		public IActionResult UpdateApplication([FromBody] ApplicationViewModel applicationView)
 		{
 			try
 			{
-				if (!ModelState.IsValid)
-				{
-					return BadRequest(ModelState);
-				}
+				var application = ApplicationMapper.ToActualObject(applicationView);
 				_applicationService.UpdateApplication(application);
-				return Ok();
 			}
 			catch (Exception e)
 			{
 				return BadRequest(e);
 			}
+			return Ok();
 		}
 
-		[HttpPost("addSubscription")]
-		public IActionResult AddSubscription([FromBody] Subscription Subscription)
+		[HttpPost]
+		[Route("subscriptions")]
+		[Authorize(Roles = "Student")]
+		public IActionResult AddSubscription([FromBody] SubscriptionViewModel subscriptionView)
 		{
 			try
 			{
-				_subscriptionService.AddSubscription(Subscription);
-				return Ok();
+				var subscription = SubscriptionMapper.ToActualObject(subscriptionView);
+				_subscriptionService.AddSubscription(subscription);
 			}
 			catch (Exception e)
 			{
 				return BadRequest(e);
 			}
+			return Ok();
 		}
 
-		[HttpPost("updateSubscription")]
-		public IActionResult UpdateSubscription([FromBody] Subscription Subscription)
+		[HttpPut]
+		[Route("subscriptions")]
+		[Authorize(Roles = "Student")]
+		public IActionResult UpdateSubscription([FromBody] SubscriptionViewModel subscriptionView)
 		{
 			try
 			{
-				if (!ModelState.IsValid)
-				{
-					return BadRequest(ModelState);
-				}
-				_subscriptionService.UpdateSubscription(Subscription);
-				return Ok();
+				var subscription = SubscriptionMapper.ToActualObject(subscriptionView);
+				_subscriptionService.UpdateSubscription(subscription);
 			}
 			catch (Exception e)
 			{
 				return BadRequest(e);
 			}
+			return Ok();
 		}
 	}
 }

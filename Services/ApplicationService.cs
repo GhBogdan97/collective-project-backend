@@ -15,7 +15,12 @@ namespace Services
 		}
 
 		public IList<int> GetStudentIdsByInternshipId(int internshipId) {
-			using (UnitOfWork uow = new UnitOfWork()) {
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				if (uow.InternshipRepository.GetById(internshipId) == null)
+				{
+					throw new Exception("There is no internship with id = " + internshipId);
+				}
 				return uow.ApplicationRepository.GetAll()
 					.AsQueryable()
 					.Where(x => x.InternshipId==internshipId)

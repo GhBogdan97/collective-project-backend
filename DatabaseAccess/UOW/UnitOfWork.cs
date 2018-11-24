@@ -12,9 +12,10 @@ namespace DatabaseAccess.UOW
         IRepository<Student> _StudentRepository;
         IRepository<Company> _CompanyRepository;
         IRepository<Internship> _InternshipRepository;
-        IRepository<Application> _ApplicationsRepository;
+        IRepository<Application> _ApplicationRepository;
         IRepository<Post> _PostRepository;
         IRepository<Rating> _RatingRepository;
+		IRepository<Subscription> _SubscriptionRepository;
 
 
 		public UnitOfWork()
@@ -76,7 +77,17 @@ namespace DatabaseAccess.UOW
 			}
 		}
 
-        private bool disposed = false;
+		public IRepository<Rating> RatingRepository
+		{
+			get
+			{
+				if (RatingRepository == null)
+					_RatingRepository = new Repository<Rating>(_context);
+				return _RatingRepository;
+			}
+		}
+
+		private bool disposed = false;
         public void Dispose()
         {
             Dispose(true);
