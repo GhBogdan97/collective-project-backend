@@ -156,19 +156,21 @@ namespace API.Controllers
 
         [Route("{id:int}/posts")]
         [HttpPost]
-        [Authorize(Roles = "Company")]
+        //[Authorize(Roles = "Company")]
         public IActionResult SavePost([FromBody] PostViewModel postView, int id)
         {
             try
             {
                 var post = PostMapper.ToActualPostObject(postView, id);
-                _postService.SavePost(post);
+                var addedPost=_postService.SavePost(post);
+                postView.Id = addedPost.Id;
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-            return Ok();
+            
+            return Ok(postView);
         }
 
         [HttpGet]

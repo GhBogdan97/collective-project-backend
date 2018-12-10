@@ -30,7 +30,8 @@ namespace API.Mappers
                 Title = post.Title,
                 Last = post.Last,
                 Image = post.Image,
-                Text=post.Text
+                Text=post.Text,
+                Id=post.Id
             };
         }
     }
