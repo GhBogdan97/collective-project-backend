@@ -19,7 +19,6 @@ namespace API.Mappers
 			{
 				InternshipId = application.InternshipId,
 				StudentId = application.StudentId,
-				Accepted = application.Accepted,
 				Status = application.Status
 			};
 		}
@@ -32,7 +31,6 @@ namespace API.Mappers
 				Internship = _internshipService.GetInternshipById(applicationViewModel.InternshipId),
 				StudentId = applicationViewModel.StudentId,
 				Student = _studentService.GetStudentById(applicationViewModel.StudentId),
-				Accepted = applicationViewModel.Accepted,
 				Status = applicationViewModel.Status
 			};
 		}

@@ -10,7 +10,6 @@ namespace API.ViewModels
 	{
 		public int InternshipId { get; set; }
 		public int StudentId { get; set; }
-		public bool Accepted { get; set; }
 		public ApplicationStatus Status { get; set; }
 	}
 }

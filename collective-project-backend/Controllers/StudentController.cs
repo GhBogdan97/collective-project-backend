@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using DatabaseAccess.Models;
 using API.ViewModels;
 using API.Mappers;
 using collective_project_backend.Controllers;
@@ -24,18 +23,21 @@ namespace API.Controllers
 		private readonly ApplicationService _applicationService;
 		private readonly InternshipService _internshipService;
 		private readonly SubscriptionService _subscriptionService;
+		private readonly RatingService _ratingService;
 
 		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
 
 		public StudentController(StudentService studentService, ApplicationService applicationService,
 			InternshipService internshipService, SubscriptionService subscriptionService,
+			RatingService ratingService,
 			UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
 		{
 			_studentService = studentService;
 			_applicationService = applicationService;
 			_internshipService = internshipService;
 			_subscriptionService = subscriptionService;
+			_ratingService = ratingService;
 			_userManager = userManager;
 			_roleManager = roleManager;
 		}
@@ -49,7 +51,7 @@ namespace API.Controllers
 
 		[HttpGet]
 		[Route("internship/{InternshipId:int}")]
-		[Authorize(Roles = "Company")]
+		//[Authorize(Roles = "Company")]
 		public ActionResult<List<StudentViewModel>> GetStudentsByInternshipId(int InternshipId)
 		{
 			var studentsByInternship = _studentService.GetStudentsByInternshipId(InternshipId);
@@ -125,7 +127,7 @@ namespace API.Controllers
 
 		[HttpPut]
 		[Route("applications")]
-		[Authorize(Roles = "Student")]
+		//[Authorize(Roles = "Student")]
 		public IActionResult UpdateApplication([FromBody] ApplicationViewModel applicationView)
 		{
 			try
@@ -172,6 +174,22 @@ namespace API.Controllers
 				return BadRequest(e);
 			}
 			return Ok();
+		}
+
+		[HttpGet]
+		[Route("applications/{StudentId:int}/{InternshipId:int}")]
+		//[Authorize(Roles = "Company")]
+		public ActionResult<bool> ExistsApplication(int StudentId, int InternshipId)
+		{
+			return Ok(_applicationService.ExistsApplication(StudentId, InternshipId));
+		}
+
+		[HttpGet]
+		[Route("ratings/{StudentId:int}/{InternshipId:int}")]
+		//[Authorize(Roles = "Company")]
+		public ActionResult<bool> ExistsRating(int StudentId, int InternshipId)
+		{
+			return Ok(_ratingService.ExistsRating(StudentId, InternshipId));
 		}
 	}
 }

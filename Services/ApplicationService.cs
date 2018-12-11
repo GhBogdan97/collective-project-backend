@@ -46,8 +46,28 @@ namespace Services
 			}
 		}
 
+
+		public void UpdateApplicationNew(Application application)
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				var app = uow.ApplicationRepository.getDbSet().
+					Where(a => (a.StudentId == application.StudentId) && (a.InternshipId == application.InternshipId)).
+					FirstOrDefault();
+				if (app == null)
+				{
+					throw new Exception("The application doesn't exist!");
+				}
+
+				uow.ApplicationRepository.UpdateEntity(app);
+				uow.Save();
+			}
+		}
+
 		public void UpdateApplication(Application application)
 		{
+			//daca studentul a fost declarat admis final la un internship, 
+			//toate celelalte aplicatii se stabilesc la respins
 			using (UnitOfWork uow = new UnitOfWork())
 			{
 				if (uow.StudentRepository.GetById(application.StudentId) == null 
@@ -56,8 +76,32 @@ namespace Services
 					throw new Exception("There is no application with student's id = " + application.StudentId 
 						+ " and with internship's id = " + application.InternshipId);
 				}
+				if (application.Status == DatabaseAccess.Enums.ApplicationStatus.ADMITTED)
+				{
+					foreach (Application a in uow.ApplicationRepository.GetAll())
+					{
+						a.Status = DatabaseAccess.Enums.ApplicationStatus.REJECTED;
+						uow.ApplicationRepository.UpdateEntity(a);
+					}
+				}
 				uow.ApplicationRepository.UpdateEntity(application);
 				uow.Save();
+			}
+		}
+
+		public bool ExistsApplication(int StudentId, int InternshipId)
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				var applications = uow.ApplicationRepository.GetAll();
+				foreach (Application a in applications)
+				{
+					if (a.InternshipId == InternshipId && a.StudentId == StudentId)
+					{
+						return true;
+					}
+				}
+				return false;
 			}
 		}
 	}
