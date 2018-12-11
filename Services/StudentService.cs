@@ -108,19 +108,19 @@ namespace Services
 				return uow.StudentRepository.GetAll().Count();
 			}
 		}
-	}
 
-	public int GetStudentIdForUser(string idUser)
-	{
-		using (UnitOfWork uow = new UnitOfWork())
+		public int GetStudentIdForUser(string idUser)
 		{
-			var student = uow.StudentRepository.getDbSet().Where(s => s.IdUser == idUser).FirstOrDefault();
-			if (student == null)
+			using (UnitOfWork uow = new UnitOfWork())
 			{
-				throw new Exception("Nu exista student pentru acest user");
-			}
+				var student = uow.StudentRepository.getDbSet().Where(s => s.IdUser == idUser).FirstOrDefault();
+				if (student == null)
+				{
+					throw new Exception("Nu exista student pentru acest user");
+				}
 
-			return student.Id;
+				return student.Id;
+			}
 		}
 	}
 }
