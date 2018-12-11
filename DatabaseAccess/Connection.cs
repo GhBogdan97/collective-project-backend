@@ -6,7 +6,7 @@
         {
             get
             {
-                return "Data Source=DEEATHEX-PC;Initial Catalog=Internship1;Integrated Security=True;";
+                return "Data Source=localhost\\SQLEXPRESS01;Initial Catalog=Internship1;Integrated Security=True;";
             }
         }
     }

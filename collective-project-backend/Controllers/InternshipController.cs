@@ -15,6 +15,7 @@ namespace API.Controllers
 {
     [Route("internships")]
     [ApiController]
+    [Authorize]
     public class InternshipController : ControllerBase
     {
 
@@ -33,8 +34,9 @@ namespace API.Controllers
 
         
         [HttpGet]
+        [Route("student")]
         [Authorize(Roles = "Student")]
-        public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent(int id)
+        public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent()
         {
             var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
             if (claim != null)
@@ -64,27 +66,27 @@ namespace API.Controllers
         [Authorize(Roles="Company")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetAllInternships()
         {
-            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
-            if(claim!=null)
+            var userId = User.GetUserId();
+            if (userId != string.Empty)
             {
-                var userId = claim.Value;
                 try
                 {
                     var companyId = _companyService.GetCompanyIdForUser(userId);
                     var internshipsDB = _internshipService.GetInternshipsForCompany(companyId);
                     var viewModels = new List<InternshipMainAttributesViewModel>();
-                    foreach(var internship in internshipsDB)
+                    foreach (var internship in internshipsDB)
                     {
                         var viewModel = Mappers.InternshipMapper.ToViewModel(internship);
                         viewModels.Add(viewModel);
                     }
                     return Ok(viewModels);
 
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     return BadRequest(ex.Message);
                 }
-                
+
             }
             return BadRequest("Compania nu a fost recunoscuta");
         }
@@ -93,16 +95,24 @@ namespace API.Controllers
         [HttpPost]
         [Route("add")]
         [Authorize(Roles = "Company")]
-        public IActionResult AddInternship(Internship internship)
+        public ActionResult<InternshipMainAttributesViewModel> AddInternship(InternshipAddViewModel internship)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             try
             {
-                if (!ModelState.IsValid)
+                var userID = User.GetUserId();
+                if(userID==string.Empty)
                 {
-                    return BadRequest(ModelState);
+                    return BadRequest("Compania nu a fost recunoscuta");
                 }
-                _internshipService.AddInternship(internship);
-                return Ok();
+                var companyID = _companyService.GetCompanyIdForUser(userID);
+                var addedInternship = _internshipService.AddInternship(InternshipAddMapper.ToInternship(internship,companyID));
+
+
+                return Ok(InternshipMapper.ToViewModel(addedInternship));
             }
             catch (Exception e)
             {
@@ -147,7 +157,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{id}/testimonials")]
-        public ActionResult<TestimonialViewModel> GetTestimonialForInternship(int id)
+        public ActionResult<List<TestimonialViewModel>> GetTestimonialForInternship(int id)
         {
             var ratings = _internshipService.GetInternshipRatings(id);
             var testimonials = new List<TestimonialViewModel>();
@@ -162,9 +172,50 @@ namespace API.Controllers
                 };
                 testimonials.Add(testimonial);
             }
-            return Ok(testimonials);
-		}
+            return Ok(new { testimonials });
+        }
 
+        [HttpGet]
+        [Route("details/{id}")]
+        [Authorize(Roles="Company,Student")]
+        public ActionResult<InternshipDetailsRatingViewModel> GetInternshipById(int id)
+        {
+            try
+            {
+                var internship = _internshipService.GetInternshipDetails(id);
+                var ratingDTO = _internshipService.GetInternshipRatingsAverege(id);
+                var internshipDetailsRating = InternshipDetailsRatingMapper.ToInternshipDetailsRating(internship, ratingDTO);
+                return Ok(internshipDetailsRating);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+          
+
+		//[Route("{id}/posts")]
+		//[HttpGet]
+		//[Authorize(Roles = "Company")]
+		//public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
+		//{
+		//	var postsView = new List<PostViewModel>();
+		//	try
+		//	{
+		//		foreach (Post post in _postService.GetPostsForInternship(id))
+		//		{
+		//			postsView.Add(PostMapper.ToViewModel(post));
+		//		}
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		return BadRequest(e.Message);
+		//	}
+		//	return Ok(postsView);
+		//}
 		[HttpGet]
 		[Route("{id:int}/posts")]
 		[Authorize(Roles = "Company")]

@@ -50,6 +50,7 @@ namespace DatabaseAccess.Data
             await userManager.AddToRoleAsync(company2, roleCompany.Name);
             #endregion
 
+            #region Students
             List<Student> students = new List<Student> {
                 new Student()
                 {
@@ -72,7 +73,9 @@ namespace DatabaseAccess.Data
                     IdUser = student2.Id
                 }
             };
+            #endregion
 
+            #region Companies
             List<Company> companies = new List<Company> {
                 new Company
                 {
@@ -89,6 +92,7 @@ namespace DatabaseAccess.Data
                     IdUser = company2.Id
                  }
             };
+            #endregion
 
             foreach (var stud in students)
             {
@@ -102,6 +106,7 @@ namespace DatabaseAccess.Data
             }
             context.SaveChanges();
 
+            #region Internships
             var accesa = context.Companies.Where(c => c.Name == "Accesa").FirstOrDefault();
             Internship internshipAccesa1 = new Internship()
             {
@@ -111,6 +116,7 @@ namespace DatabaseAccess.Data
                 Topics = "React, JavaScript",
                 Start = new DateTime(2018, 3, 3),
                 End = new DateTime(2018, 5, 3),
+                Name= "Best Internship EU",
                 Weeks = 2,
                 CompanyId=accesa.Id
             };
@@ -123,6 +129,7 @@ namespace DatabaseAccess.Data
                 Topics = "Azure functions, Serverless",
                 Start = new DateTime(2017, 10, 3),
                 End = new DateTime(2017, 11, 3),
+                Name= "Internship Title",
                 Weeks = 2,
                 CompanyId=accesa.Id
             };
@@ -130,14 +137,15 @@ namespace DatabaseAccess.Data
             context.Internships.Add(internshipAccesa2);
             context.SaveChanges();
 
-         
             accesa.Internships.Add(internshipAccesa1);
             accesa.Internships.Add(internshipAccesa2);
             context.SaveChanges();
+            #endregion
 
             var simona = context.Students.Where(s => s.Firstname == "Simona").FirstOrDefault();
             var ionescu= context.Students.Where(s => s.Firstname == "Ionescu").FirstOrDefault();
 
+            #region Applications
             var application1 = new Application()
             {
                 InternshipId=internshipAccesa1.Id,
@@ -161,6 +169,41 @@ namespace DatabaseAccess.Data
             };
             context.Applications.Add(application3);
             context.SaveChanges();
+            #endregion
+
+            #region Ratings
+
+            List<Rating> ratings = new List<Rating>
+            {
+                new Rating
+                {
+                    InternshipId = 1,
+                    StudentId = 1,
+                    RatingCompany = 4,
+                    RatingInternship = 5,
+                    RatingMentors = 5,
+                    Date = new DateTime(2018,05,10),
+                    Testimonial = "Cel mai fain internship din toate (1) pe care le-am avut!"
+                },
+                new Rating
+                {
+                    InternshipId = 1,
+                    StudentId = 2,
+                    RatingCompany = 3,
+                    RatingInternship = 3,
+                    RatingMentors = 3,
+                    Date = new DateTime(2018,07,23),
+                    Testimonial = "Meh."
+                },
+            };
+
+            foreach (var rating in ratings)
+            {
+                context.Ratings.Add(rating);
+            }
+            context.SaveChanges();
+
+            #endregion  
         }
 
     }

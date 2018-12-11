@@ -35,17 +35,16 @@ namespace API.Controllers
         public ActionResult<IList<ApplicationsPerYearViewModel>> GetApplicationsPerYear()
         {
 
-            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
-            if (claim == null)
+            var userID = User.GetUserId();
+            if (userID == string.Empty)
                 return BadRequest("Compania nu a fost recunoscuta");
             
-            var userId = claim.Value;
             var applicationsPerYear = new List<ApplicationsPerYearViewModel>();
             IList<Internship> internships = null;
 
             try
             {
-                var id = _companyService.GetCompanyIdForUser(userId);
+                var id = _companyService.GetCompanyIdForUser(userID);
                 internships = _internshipService.GetInternshipsForCompany(id);
                 var years = internships.Select(i => i.Start.Year).Distinct().ToList();
                 foreach (var year in years)
