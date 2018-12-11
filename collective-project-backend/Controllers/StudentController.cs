@@ -115,7 +115,7 @@ namespace API.Controllers
 		{
 			try
 			{
-				var application = ApplicationMapper.ToActualObject(applicationView);
+				var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
 				_applicationService.AddApplication(application);
 			}
 			catch (Exception e)
@@ -132,7 +132,7 @@ namespace API.Controllers
 		{
 			try
 			{
-				var application = ApplicationMapper.ToActualObject(applicationView);
+				var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
 				_applicationService.UpdateApplication(application);
 			}
 			catch (Exception e)

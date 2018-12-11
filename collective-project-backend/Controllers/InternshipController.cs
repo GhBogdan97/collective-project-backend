@@ -61,29 +61,7 @@ namespace API.Controllers
             }
             return BadRequest("Studentul nu a fost recunoscut");
         }
-        
-        [HttpGet]
-        [Route("{id:int}/posts")]
-        public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
-        {
-            try
-            {
-                var posts = _postService.GetPostsForInternship(id);
-                var postViewModels = new List<PostViewModel>();
-                foreach (var post in posts)
-                {
-                    var postModel = PostMapper.ToPostViewModel(post);
-                    postViewModels.Add(postModel);
-                }
-                return Ok(postViewModels);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-           
-        }
-
+       
         [HttpGet]
         [Authorize(Roles="Company")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetAllInternships()
@@ -238,5 +216,27 @@ namespace API.Controllers
 		//	}
 		//	return Ok(postsView);
 		//}
+		[HttpGet]
+		[Route("{id:int}/posts")]
+		[Authorize(Roles = "Company")]
+		public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
+		{
+			try
+			{
+				var posts = _postService.GetPostsForInternship(id);
+				var postViewModels = new List<PostViewModel>();
+				foreach (var post in posts)
+				{
+					var postModel = PostMapper.ToPostViewModel(post);
+					postViewModels.Add(postModel);
+				}
+				return Ok(postViewModels);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
+		}
 	}
 }
