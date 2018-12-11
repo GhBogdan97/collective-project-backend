@@ -19,18 +19,18 @@ namespace API.Mappers
                 Last = postView.Last,
                 Image = postView.Image
             };
-		}
+        }
 
-		public static PostViewModel ToViewModel(Post post)
-		{
-			return new PostViewModel()
-			{
-				Date = post.Date.ToString(),
-				Title = post.Title,
-				Last = post.Last,
-				Image = post.Image,
+        public static PostViewModel ToPostViewModel(Post post)
+        {
+            return new PostViewModel()
+            {
+                Date = post.Date.ToString(),
+                Title = post.Title,
+                Last = post.Last,
+                Image = post.Image,
 				InternshipId = post.InternshipId
 			};
-		}
-	}
+        }
+    }
 }
