@@ -11,14 +11,14 @@ namespace DatabaseAccess.Models
         {
             Ratings = new List<Rating>();
             Posts = new List<Post>();
-            PlacesLeft = Places;
+            OccupiedPlaces = 0;
         }
 
         public int Id { get; set; }
         public string Description { get; set; }
         public int Places { get; set; }
         [NotMapped]
-        public int PlacesLeft { get; set; }
+        public int OccupiedPlaces { get; set; }
         public string Topics { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }

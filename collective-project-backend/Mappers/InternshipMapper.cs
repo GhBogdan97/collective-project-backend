@@ -35,5 +35,16 @@ namespace API.Mappers
                 Weeks = internshipView.Weeks
             };
         }
+
+        public static InternshipManagementViewModel ToInternshipManagementViewModel(Internship internship)
+        {
+            return new InternshipManagementViewModel()
+            {
+                Id = internship.Id,
+                Name = internship.Description, //TO DO change to name after merge
+                TotalPlaces = internship.Places,
+                OccupiedPlaces = internship.OccupiedPlaces
+            };
+        }
     }
 }
