@@ -28,8 +28,7 @@ namespace API.Mappers
                 Date = post.Date.ToString(),
                 Title = post.Title,
                 Last = post.Last,
-                Image = post.Image,
-				InternshipId = post.InternshipId
+                Image = post.Image
 			};
         }
     }

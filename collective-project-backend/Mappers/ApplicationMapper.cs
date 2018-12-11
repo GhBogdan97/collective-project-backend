@@ -10,7 +10,6 @@ namespace API.Mappers
 {
 	public class ApplicationMapper
 	{
-		private static InternshipService _internshipService = new InternshipService();
 		private static StudentService _studentService = new StudentService();
 
 		public static ApplicationViewModel ToViewModel(Application application)
@@ -23,12 +22,12 @@ namespace API.Mappers
 			};
 		}
 
-		public static Application ToActualObject(ApplicationViewModel applicationViewModel)
+		public static Application ToActualObject(ApplicationViewModel applicationViewModel, InternshipService internshipService)
 		{
 			return new Application()
 			{
 				InternshipId = applicationViewModel.InternshipId,
-				Internship = _internshipService.GetInternshipById(applicationViewModel.InternshipId),
+				Internship = internshipService.GetInternshipById(applicationViewModel.InternshipId),
 				StudentId = applicationViewModel.StudentId,
 				Student = _studentService.GetStudentById(applicationViewModel.StudentId),
 				Status = applicationViewModel.Status
