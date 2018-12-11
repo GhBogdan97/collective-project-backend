@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace DatabaseAccess.Models
@@ -10,11 +11,14 @@ namespace DatabaseAccess.Models
         {
             Ratings = new List<Rating>();
             Posts = new List<Post>();
+            PlacesLeft = Places;
         }
 
         public int Id { get; set; }
         public string Description { get; set; }
         public int Places { get; set; }
+        [NotMapped]
+        public int PlacesLeft { get; set; }
         public string Topics { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }

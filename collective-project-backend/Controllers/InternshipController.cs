@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API.Mappers;
+﻿using API.Mappers;
 using API.ViewModels;
 using DatabaseAccess.Models;
-using DatabaseAccess.UOW;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 
 namespace API.Controllers
@@ -22,16 +21,37 @@ namespace API.Controllers
         private readonly CompanyService _companyService;
         private readonly PostService _postService;
         private readonly StudentService _studentService;
+        private readonly ApplicationService _applicationService;
 
-        public InternshipController(StudentService studentService, InternshipService internshipService, CompanyService companyService, PostService postService)
+        public InternshipController(StudentService studentService,
+            InternshipService internshipService,
+            CompanyService companyService,
+            PostService postService,
+            ApplicationService applicationService)
         {
             _internshipService = internshipService;
             _companyService = companyService;
             _postService = postService;
             _studentService = studentService;
+            _applicationService = applicationService;
         }
 
-        
+        [HttpGet]
+        [Route("{id}/management")]
+        //[Authorize(Roles = "Company")]
+        public ActionResult<List<ApplicationForManagementViewModel>> GetStudentManagementDetails(int id)
+        {
+            var applications = _applicationService.GetApplicationsForInternship(id);
+            var applicationManagement = new List<ApplicationForManagementViewModel>();
+            foreach(var app in applications)
+            {
+                var appManagement = ApplicationMapper.ToApplicationManagement(app);
+                applicationManagement.Add(appManagement);
+            }
+         
+            return Ok(JsonConvert.SerializeObject(applicationManagement));
+        }
+
         [HttpGet]
         [Authorize(Roles = "Student")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent(int id)

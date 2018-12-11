@@ -60,7 +60,7 @@ namespace collective_project_backend
             services.AddTransient<InternshipService>();
             services.AddTransient<CompanyService>();
             services.AddTransient<StatisticsService>();
-         
+            services.AddTransient<ApplicationService>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

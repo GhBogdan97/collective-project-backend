@@ -1,5 +1,6 @@
 ﻿using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,16 @@ namespace Services
             using (UnitOfWork uow = new UnitOfWork())
             {
                 return uow.StudentRepository.GetAll();
+            }
+        }
+        public Student GetStudentById(int id)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.StudentRepository.getDbSet()
+                    .Where(s => s.Id == id)
+                    .Include(s => s.Applications)
+                    .FirstOrDefault();
             }
         }
 
