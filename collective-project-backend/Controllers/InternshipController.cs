@@ -34,8 +34,9 @@ namespace API.Controllers
 
         
         [HttpGet]
+        [Route("student")]
         [Authorize(Roles = "Student")]
-        public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent(int id)
+        public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent()
         {
             var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
             if (claim != null)
@@ -178,7 +179,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{id}/testimonials")]
-        public ActionResult<TestimonialViewModel> GetTestimonialForInternship(int id)
+        public ActionResult<List<TestimonialViewModel>> GetTestimonialForInternship(int id)
         {
             var ratings = _internshipService.GetInternshipRatings(id);
             var testimonials = new List<TestimonialViewModel>();
@@ -193,7 +194,7 @@ namespace API.Controllers
                 };
                 testimonials.Add(testimonial);
             }
-            return Ok(testimonials);
+            return Ok(new { testimonials });
         }
 
         [HttpGet]

@@ -50,6 +50,7 @@ namespace Services
                 }
                 internshipDb.Topics = internship.Topics ?? internshipDb.Topics;
                 internshipDb.Description = internship.Description ?? internshipDb.Description;
+                internshipDb.Name = internship.Name ?? internshipDb.Name;
                 uow.InternshipRepository.UpdateEntity(internshipDb);
 
                 foreach (var application in internshipDb.Applications)

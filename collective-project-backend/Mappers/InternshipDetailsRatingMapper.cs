@@ -22,7 +22,8 @@ namespace API.Mappers
                     Places = internship.Places,
                     Id = internship.Id,
                     Topics = internship.Topics,
-                    Weeks = internship.Weeks
+                    Weeks = internship.Weeks,
+                    Name = internship.Name
                 },
                 RatingCompany = ratingDTO.RatingCompany,
                 RatingInternship = ratingDTO.RatingInternship,

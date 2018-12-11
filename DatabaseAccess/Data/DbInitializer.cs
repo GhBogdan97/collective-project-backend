@@ -116,6 +116,7 @@ namespace DatabaseAccess.Data
                 Topics = "React, JavaScript",
                 Start = new DateTime(2018, 3, 3),
                 End = new DateTime(2018, 5, 3),
+                Name= "Best Internship EU",
                 Weeks = 2,
                 CompanyId=accesa.Id
             };
@@ -128,6 +129,7 @@ namespace DatabaseAccess.Data
                 Topics = "Azure functions, Serverless",
                 Start = new DateTime(2017, 10, 3),
                 End = new DateTime(2017, 11, 3),
+                Name= "Internship Title",
                 Weeks = 2,
                 CompanyId=accesa.Id
             };
