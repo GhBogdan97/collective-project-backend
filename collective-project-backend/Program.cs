@@ -11,7 +11,6 @@ namespace collective_project_backend
     {
         public static void Main(string[] args)
         {
-
             var host = BuildWebHost(args);
             using (var scope = host.Services.CreateScope())
             {
@@ -25,7 +24,7 @@ namespace collective_project_backend
 
             }
             host.Run();
-        }
+		}
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)

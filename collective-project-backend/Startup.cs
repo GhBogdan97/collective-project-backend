@@ -26,7 +26,9 @@ namespace collective_project_backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+			services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
+			services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(DatabaseAccess.Configuration.ConnectionString));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -55,15 +57,17 @@ namespace collective_project_backend
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
-            services.AddTransient<StudentService>();
-            services.AddTransient<PostService>();
-            services.AddTransient<InternshipService>();
-            services.AddTransient<CompanyService>();
-            services.AddTransient<StatisticsService>();
-         
+			services.AddTransient<ApplicationService>();
+			services.AddTransient<CompanyService>();
+			services.AddTransient<InternshipService>();
+			services.AddTransient<PostService>();
+			services.AddTransient<RatingService>();
+			services.AddTransient<StatisticsService>();
+			services.AddTransient<StudentService>();
+			services.AddTransient<SubscriptionService>();
 
-            // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
+			// Register the Swagger generator, defining 1 or more Swagger documents
+			services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "InterLink API", Version = "v1" });
             });

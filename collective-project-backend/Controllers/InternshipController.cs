@@ -185,6 +185,26 @@ namespace API.Controllers
                 testimonials.Add(testimonial);
             }
             return Ok(testimonials);
-        }
-    }
+		}
+
+		[Route("{id}/posts")]
+		[HttpGet]
+		[Authorize(Roles = "Company")]
+		public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
+		{
+			var postsView = new List<PostViewModel>();
+			try
+			{
+				foreach (Post post in _postService.GetPostsForInternship(id))
+				{
+					postsView.Add(PostMapper.ToViewModel(post));
+				}
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e.Message);
+			}
+			return Ok(postsView);
+		}
+	}
 }

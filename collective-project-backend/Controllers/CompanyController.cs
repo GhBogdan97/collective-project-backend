@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +10,23 @@ namespace API.Controllers
     [Route("companies")]
     [ApiController]
     public class CompanyController : ControllerBase
-    {
-        private readonly CompanyService _companyService;
+	{
+		private readonly IEmailSender _emailSender;
+		private readonly CompanyService _companyService;
 
-        public CompanyController(CompanyService companyService)
+        public CompanyController(CompanyService companyService, IEmailSender emailSender)
         {
             _companyService = companyService;
+			_emailSender = emailSender;
         }
 
-        [HttpGet]
+		public async Task SendEmailAction()
+		{
+			await _emailSender.SendEmailAsync("andreea_ciforac@yahoo.com", "subject",
+						 $"Enter email body here");
+		}
+
+		[HttpGet]
         public ActionResult<IList<Company>> GetAllCompanies()
         {
             return Ok(_companyService.GetAllCompanies());
