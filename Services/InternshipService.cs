@@ -188,5 +188,21 @@ namespace Services
                 return uow.InternshipRepository.GetAll().Count();
             }
         }
-    }
+
+		public IList<Internship> GetAllInternships()
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				return uow.InternshipRepository.GetAll();
+			}
+		}
+
+		public Internship GetInternshipById(int id)
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				return uow.InternshipRepository.GetById(id);
+			}
+		}
+	}
 }

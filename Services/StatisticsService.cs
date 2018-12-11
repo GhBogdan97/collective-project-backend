@@ -20,7 +20,7 @@ namespace Services
                     .ToList();
 
 
-                var applications = uow.ApplicationsRepository.getDbSet();
+                var applications = uow.ApplicationRepository.getDbSet();
                 foreach(var internship in internships)
                 {
                     var idInternship = internship.Id;
