@@ -23,7 +23,6 @@ namespace DatabaseAccess.Data
             await Seed(context, userManager, roleManager);
         }
 
-
         public static async Task Seed(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
 
@@ -50,6 +49,7 @@ namespace DatabaseAccess.Data
             await userManager.AddToRoleAsync(company2, roleCompany.Name);
             #endregion
 
+
             List<Student> students = new List<Student> {
                 new Student()
                 {
@@ -58,6 +58,7 @@ namespace DatabaseAccess.Data
                     University = "UBB",
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
+                    Cv = System.IO.File.ReadAllBytes("E:\\Downloads\\cvExample.pdf"),
                     Year = 3,
                     IdUser = student1.Id
                 },
@@ -162,6 +163,8 @@ namespace DatabaseAccess.Data
             context.Applications.Add(application3);
             context.SaveChanges();
         }
-
+      
     }
+
+   
 }

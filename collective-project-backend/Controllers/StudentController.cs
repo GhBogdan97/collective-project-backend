@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using API.ViewModels;
@@ -14,7 +15,7 @@ namespace API.Controllers
 {
     [Route("students")]
     [ApiController]
-    [Authorize]
+   // [Authorize]
     public class StudentController : ControllerBase
     {
         private readonly StudentService _studentService;
@@ -32,12 +33,15 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("{id}/cv")]
-        public ActionResult<CvViewModel> GetCV(int id)
+        public IActionResult GetCV(int id)
         {
             var student = _studentService.GetStudentById(id);
             if (student == null)
                 return BadRequest("Studentul nu exista");
+            Stream stream = new MemoryStream(student.Cv);
+            var resultStream= new FileStreamResult(stream, "application/pdf");
             var cv = new CvViewModel() { Id = student.Id, Cv = student.Cv };
+
             return Ok(JsonConvert.SerializeObject(cv));
         }
     }

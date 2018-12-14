@@ -48,8 +48,9 @@ namespace API.Controllers
                 var appManagement = ApplicationMapper.ToApplicationManagement(app);
                 applicationManagement.Add(appManagement);
             }
-         
-            return Ok(JsonConvert.SerializeObject(applicationManagement));
+
+            var obj = new ApplicationsListObject() { Applications = applicationManagement };
+            return Ok(JsonConvert.SerializeObject(obj));
         }
 
         [HttpGet]
