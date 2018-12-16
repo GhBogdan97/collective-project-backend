@@ -190,6 +190,16 @@ namespace API.Controllers
 		public ActionResult<bool> ExistsRating(int StudentId, int InternshipId)
 		{
 			return Ok(_ratingService.ExistsRating(StudentId, InternshipId));
-		}
-	}
+        }
+
+        [HttpGet]
+        [Route("userInfo/{CurrentUserId}")]
+        //[Authorize(Roles = "Student")]
+        public async Task<ActionResult<List<StudentViewModel>>> GetCurrentUserDetails(string CurrentUserId)
+        {
+            var student = StudentMapper.ToViewModel(_studentService.GetStudentByUserId(CurrentUserId));
+            student.Email = (await _userManager.FindByIdAsync(CurrentUserId)).Email;
+            return Ok(student);
+        }
+    }
 }

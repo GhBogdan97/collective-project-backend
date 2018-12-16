@@ -76,11 +76,11 @@ namespace Services
 					throw new Exception("There is no application with student's id = " + application.StudentId 
 						+ " and with internship's id = " + application.InternshipId);
 				}
-				if (application.Status == DatabaseAccess.Enums.ApplicationStatus.ADMITTED)
+				if (application.Status == DatabaseAccess.Enums.ApplicationStatus.PARTICIPANT)
 				{
 					foreach (Application a in uow.ApplicationRepository.GetAll())
 					{
-						a.Status = DatabaseAccess.Enums.ApplicationStatus.REJECTED;
+						a.Status = DatabaseAccess.Enums.ApplicationStatus.RESPINS;
 						uow.ApplicationRepository.UpdateEntity(a);
 					}
 				}
