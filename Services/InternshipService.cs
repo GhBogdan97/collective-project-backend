@@ -51,6 +51,7 @@ namespace Services
                 internshipDb.Topics = internship.Topics ?? internshipDb.Topics;
                 internshipDb.Description = internship.Description ?? internshipDb.Description;
                 internshipDb.Name = internship.Name ?? internshipDb.Name;
+                internshipDb.OccupiedPlaces = internship.OccupiedPlaces;
                 uow.InternshipRepository.UpdateEntity(internshipDb);
 
                 foreach (var application in internshipDb.Applications)
@@ -201,7 +202,10 @@ namespace Services
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
-				return uow.InternshipRepository.GetById(id);
+                return uow.InternshipRepository.getDbSet()
+                    .Where(i => i.Id == id)
+                    .Include(i => i.Company)
+                    .FirstOrDefault();
 			}
 		}
 	}

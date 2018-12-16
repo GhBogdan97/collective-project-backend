@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using API.Mappers;
+using API.ViewModels;
+using collective_project_backend.ViewModels.AccountViewModels;
 using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Services;
-using API.ViewModels;
-using API.Mappers;
-using collective_project_backend.Controllers;
 using Microsoft.AspNetCore.Identity;
-using collective_project_backend.ViewModels.AccountViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Services;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
@@ -135,7 +134,7 @@ namespace API.Controllers
 			try
 			{
 				var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
-				_applicationService.UpdateApplication(application);
+				_applicationService.RejectOtherApplications(application);
 			}
 			catch (Exception e)
 			{
@@ -151,8 +150,7 @@ namespace API.Controllers
 		{
 			try
 			{
-				var subscription = SubscriptionMapper.ToActualObject(subscriptionView);
-				_subscriptionService.AddSubscription(subscription);
+				_subscriptionService.AddSubscription(subscriptionView.CompanyId, subscriptionView.StudentId);
 			}
 			catch (Exception e)
 			{
@@ -168,8 +166,7 @@ namespace API.Controllers
 		{
 			try
 			{
-				var subscription = SubscriptionMapper.ToActualObject(subscriptionView);
-				_subscriptionService.UpdateSubscription(subscription);
+				_subscriptionService.DeleteSubscription(subscriptionView.CompanyId, subscriptionView.StudentId);
 			}
 			catch (Exception e)
 			{
@@ -202,6 +199,20 @@ namespace API.Controllers
             var student = StudentMapper.ToViewModel(_studentService.GetStudentByUserId(currentUserId));
             student.Email = (await _userManager.FindByIdAsync(currentUserId)).Email;
             return Ok(student);
+        }
+
+        [HttpGet]
+        [Route("{id}/cv")]
+        public IActionResult GetCV(int id)
+        {
+            var student = _studentService.GetStudentById(id);
+            if (student == null)
+                return BadRequest("Studentul nu exista");
+            Stream stream = new MemoryStream(student.Cv);
+            var resultStream = new FileStreamResult(stream, "application/pdf");
+            var cv = new CvViewModel() { Id = student.Id, Cv = student.Cv };
+
+            return Ok(JsonConvert.SerializeObject(cv));
         }
     }
 }

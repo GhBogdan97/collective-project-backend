@@ -27,34 +27,36 @@ namespace Services
 			}
 		}
 
-		public void AddSubscription(Subscription subscription)
+		public void AddSubscription(int companyId,int studentId)
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
-				if (uow.StudentRepository.GetById(subscription.StudentId) == null)
+				if (uow.StudentRepository.GetById(studentId) == null)
 				{
-					throw new Exception("There is no student with id = " + subscription.StudentId);
+					throw new Exception("There is no student with id = " + studentId);
 				}
-				if (uow.CompanyRepository.GetById(subscription.CompanyId) == null)
+				if (uow.CompanyRepository.GetById(companyId) == null)
 				{
-					throw new Exception("There is no company with id = " + subscription.CompanyId);
+					throw new Exception("There is no company with id = " + companyId);
 				}
+                var subscription = new Subscription() { CompanyId = companyId, StudentId = studentId };
 				uow.SubscriptionRepository.AddEntity(subscription);
 				uow.Save();
 			}
 		}
 
-		public void UpdateSubscription(Subscription subscription)
+		public void DeleteSubscription(int companyId, int studentId)
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
-				if (uow.StudentRepository.GetById(subscription.StudentId) == null
-					|| uow.CompanyRepository.GetById(subscription.CompanyId) == null)
+				if (uow.StudentRepository.GetById(studentId) == null
+					|| uow.CompanyRepository.GetById(companyId) == null)
 				{
-					throw new Exception("There is no subscription with student's id = " + subscription.StudentId
-						+ " and with company's id = " + subscription.CompanyId);
+					throw new Exception("There is no subscription with student's id = " + studentId
+                        + " and with company's id = " + companyId);
 				}
-				uow.SubscriptionRepository.UpdateEntity(subscription);
+                var subscription = new Subscription() { CompanyId = companyId, StudentId = studentId };
+                uow.SubscriptionRepository.DeleteEntity(subscription);
 				uow.Save();
 			}
 		}
