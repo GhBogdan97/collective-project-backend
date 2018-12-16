@@ -12,8 +12,7 @@ namespace DatabaseAccess.Models
 
         public int StudentId { get; set; }
         public Student Student { get; set; }
-
-        public bool Accepted { get; set; }
+		
         public ApplicationStatus Status { get; set; }
         
     }

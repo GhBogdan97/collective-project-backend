@@ -1,4 +1,5 @@
-﻿using DatabaseAccess.Models;
+﻿using DatabaseAccess.DTOs;
+using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +50,7 @@ namespace Services
                 }
                 internshipDb.Topics = internship.Topics ?? internshipDb.Topics;
                 internshipDb.Description = internship.Description ?? internshipDb.Description;
+                internshipDb.Name = internship.Name ?? internshipDb.Name;
                 uow.InternshipRepository.UpdateEntity(internshipDb);
 
                 foreach (var application in internshipDb.Applications)
@@ -98,7 +100,7 @@ namespace Services
         }
 
 
-        public void AddInternship(Internship internship)
+        public Internship AddInternship(Internship internship)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
@@ -109,7 +111,7 @@ namespace Services
 
                 if (company == null)
                 {
-                    throw new Exception("There is no company with id = " + internship.CompanyId);
+                    throw new Exception($"Compania cu id-ul {internship.Id} nu exista");
                 }
                 uow.InternshipRepository.AddEntity(internship);
 
@@ -121,6 +123,50 @@ namespace Services
                     emailSender.SendEmailAsync(user.Email, "New internship!", "A new internship has been added for " + company.Name + "! Check more about it here: http://localhost:8080/");
                 }
                 uow.Save();
+                return internship;
+            }
+        }
+
+        public Internship GetInternshipDetails(int id)
+        {
+            using (var uow = new UnitOfWork())
+            {
+                var internship = uow.InternshipRepository.GetById(id);
+
+                if(internship == null)
+                {
+                    throw new Exception("Internship-ul nu exista!");
+                }
+
+                return internship;
+            }
+        }
+
+        public RatingDTO GetInternshipRatingsAverege(int id)
+        {
+            using (var uow = new UnitOfWork())
+            {
+                var ratings = uow.RatingRepository.getDbSet().Where(t=>t.InternshipId==id).ToList();
+
+                if (ratings == null)
+                {
+                    throw new Exception("Nu exista evaluari pentru acest internship!");
+                }
+
+                RatingDTO finalRating = new RatingDTO();
+
+                ratings.ForEach(r =>
+                {
+                    finalRating.RatingCompany += r.RatingCompany;
+                    finalRating.RatingInternship += r.RatingInternship;
+                    finalRating.RatingMentors += r.RatingMentors;
+                });
+
+                finalRating.RatingCompany /= (float)ratings.Count;
+                finalRating.RatingInternship /= (float)ratings.Count;
+                finalRating.RatingMentors /= (float)ratings.Count;
+
+                return finalRating;
             }
         }
 
@@ -142,5 +188,21 @@ namespace Services
                 return uow.InternshipRepository.GetAll().Count();
             }
         }
-    }
+
+		public IList<Internship> GetAllInternships()
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				return uow.InternshipRepository.GetAll();
+			}
+		}
+
+		public Internship GetInternshipById(int id)
+		{
+			using (UnitOfWork uow = new UnitOfWork())
+			{
+				return uow.InternshipRepository.GetById(id);
+			}
+		}
+	}
 }
