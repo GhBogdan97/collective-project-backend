@@ -1,4 +1,6 @@
-﻿using API.ViewModels;
+﻿using API.Mappers;
+using API.ViewModels;
+using DatabaseAccess.DTOs;
 using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -9,29 +11,30 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("statistics")]
     [ApiController]
-   
     public class StatisticsController: ControllerBase
     {
         private readonly StatisticsService _statisticsService;
         private readonly InternshipService _internshipService;
         private readonly StudentService _studentService;
         private readonly CompanyService _companyService;
+        private readonly RatingService _ratingService;
 
         public StatisticsController(StatisticsService statisticsService,
                                     InternshipService internshipService,
                                     StudentService studentService,
-                                    CompanyService companyService)
+                                    CompanyService companyService,
+                                    RatingService ratingService)
         {
             _statisticsService = statisticsService;
             _internshipService = internshipService;
             _studentService = studentService;
             _companyService= companyService;
+            _ratingService = ratingService;
         }
       
         [HttpGet]
-        [Route("evolution")]
+        [Route("statistics/evolution")]
         public ActionResult<IList<ApplicationsPerYearViewModel>> GetApplicationsPerYear()
         {
 
@@ -69,7 +72,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("general")]
+        [Route("statistics/general")]
         public ActionResult<GeneralStatisticsViewModel> GetGeneralStatistics()
         {
             var generalStatisticsViewModel = new GeneralStatisticsViewModel()
@@ -79,6 +82,21 @@ namespace API.Controllers
                 NumberOfInternships = _internshipService.CountInternships()
             };
             return Ok(generalStatisticsViewModel);
+        }
+
+        [HttpGet]
+        [Route("statistics/ratings/{companyId}")]
+        public ActionResult<RatingDTO> GetAverageRatingsCompany(int companyId)
+        {
+            RatingDTO ratingDTO = _ratingService.getAverageRatings(companyId);
+            return Ok(ratingDTO);
+        }
+
+        [HttpGet]
+        [Route("statistics/piechart/{companyId}")]
+        public ActionResult<PiechartDTO> GetStatisticsPiechart(int companyId)
+        {
+            return Ok(_ratingService.getStatisticsPiechart(companyId));
         }
     }
 }

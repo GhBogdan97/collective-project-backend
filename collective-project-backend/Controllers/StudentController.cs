@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("students")]
 	[ApiController]
 	public class StudentController : ControllerBase
 	{
@@ -42,31 +41,33 @@ namespace API.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Roles = "Company")]
+        [Route("students")]
+        [Authorize(Roles = "Company")]
 		public ActionResult<List<StudentViewModel>> GetAllStudents()
 		{
 			return Ok(StudentMapper.GetStudentsViewFrom(_studentService.GetAllStudents()));
 		}
 
 		[HttpGet]
-		[Route("internship/{InternshipId:int}")]
+		[Route("students/internship/{internshipId}")]
 		//[Authorize(Roles = "Company")]
-		public ActionResult<List<StudentViewModel>> GetStudentsByInternshipId(int InternshipId)
+		public ActionResult<List<StudentViewModel>> GetStudentsByInternshipId(int internshipId)
 		{
-			var studentsByInternship = _studentService.GetStudentsByInternshipId(InternshipId);
+			var studentsByInternship = _studentService.GetStudentsByInternshipId(internshipId);
 			return Ok(StudentMapper.GetStudentsViewFrom(studentsByInternship));
 		}
 
 		[HttpGet]
-		[Route("company/{CompanyId:int}")]
+		[Route("students/company/{companyId}")]
 		[Authorize(Roles = "Company")]
-		public ActionResult<List<StudentViewModel>> GetStudentsByCompanyId(int CompanyId)
+		public ActionResult<List<StudentViewModel>> GetStudentsByCompanyId(int companyId)
 		{
-			var studentsByCompany = _studentService.GetStudentsByInternshipId(CompanyId);
+			var studentsByCompany = _studentService.GetStudentsByInternshipId(companyId);
 			return Ok(StudentMapper.GetStudentsViewFrom(studentsByCompany));
 		}
 
 		[HttpPost]
+        [Route("students/register")]
 		[Authorize(Roles = "Student")]
 		public async Task<IActionResult> RegisterStudentAsync([FromBody] StudentViewModel studentView)
 		{
@@ -92,6 +93,7 @@ namespace API.Controllers
 		}
 
 		[HttpPut]
+        [Route("students")]
 		[Authorize(Roles = "Student")]
 		public IActionResult UpdateStudent([FromBody] StudentViewModel studentView)
 		{
@@ -108,7 +110,7 @@ namespace API.Controllers
 		}
 
 		[HttpPost]
-		[Route("applications")]
+		[Route("students/applications")]
 		[Authorize(Roles = "Student")]
 		public IActionResult AddApplication([FromBody] ApplicationViewModel applicationView)
 		{
@@ -125,7 +127,7 @@ namespace API.Controllers
 		}
 
 		[HttpPut]
-		[Route("applications")]
+		[Route("students/applications")]
 		//[Authorize(Roles = "Student")]
 		public IActionResult UpdateApplication([FromBody] ApplicationViewModel applicationView)
 		{
@@ -142,7 +144,7 @@ namespace API.Controllers
 		}
 
 		[HttpPost]
-		[Route("subscriptions")]
+		[Route("students/subscriptions")]
 		[Authorize(Roles = "Student")]
 		public IActionResult AddSubscription([FromBody] SubscriptionViewModel subscriptionView)
 		{
@@ -157,8 +159,8 @@ namespace API.Controllers
 			return Ok();
 		}
 
-		[HttpDelete]
-		[Route("subscriptions")]
+		[HttpPut]
+		[Route("students/subscriptions")]
 		[Authorize(Roles = "Student")]
 		public IActionResult UpdateSubscription([FromBody] SubscriptionViewModel subscriptionView)
 		{
@@ -174,16 +176,31 @@ namespace API.Controllers
 		}
 
 		[HttpGet]
-		[Route("applications/{StudentId:int}/{InternshipId:int}")]
+		[Route("students/applications/{studentId}/{internshipId}")]
 		//[Authorize(Roles = "Company")]
-		public ActionResult<bool> ExistsApplication(int StudentId, int InternshipId)
+		public ActionResult<bool> ExistsApplication(int studentId, int internshipId)
 		{
-			return Ok(_applicationService.ExistsApplication(StudentId, InternshipId));
+			return Ok(_applicationService.ExistsApplication(studentId, internshipId));
 		}
 
 		[HttpGet]
-		[Route("ratings/{StudentId:int}/{InternshipId:int}")]
+		[Route("students/ratings/{studentId}/{internshipId}")]
 		//[Authorize(Roles = "Company")]
+		public ActionResult<bool> ExistsRating(int studentId, int internshipId)
+		{
+			return Ok(_ratingService.ExistsRating(studentId, internshipId));
+        }
+
+        [HttpGet]
+        [Route("students/userInfo/{currentUserId}")]
+        //[Authorize(Roles = "Student")]
+        public async Task<ActionResult<List<StudentViewModel>>> GetCurrentUserDetails(string currentUserId)
+        {
+            var student = StudentMapper.ToViewModel(_studentService.GetStudentByUserId(currentUserId));
+            student.Email = (await _userManager.FindByIdAsync(currentUserId)).Email;
+            return Ok(student);
+        }
+    }
 		public ActionResult<bool> ExistsRating(int StudentId, int InternshipId)
 		{
 			return Ok(_ratingService.ExistsRating(StudentId, InternshipId));
