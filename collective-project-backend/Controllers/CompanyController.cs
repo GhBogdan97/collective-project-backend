@@ -7,7 +7,7 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("companies")]
+   
     [ApiController]
     public class CompanyController : ControllerBase
 	{
@@ -20,20 +20,15 @@ namespace API.Controllers
 			_emailSender = emailSender;
         }
 
-		public async Task SendEmailAction()
-		{
-			await _emailSender.SendEmailAsync("andreea_ciforac@yahoo.com", "subject",
-						 $"Enter email body here");
-		}
-
 		[HttpGet]
+        [Route("companies")]
         public ActionResult<IList<Company>> GetAllCompanies()
         {
             return Ok(_companyService.GetAllCompanies());
         }
 
         [HttpPost]
-        [Route("update")]
+        [Route("companies")]
         public IActionResult UpdateCompany(Company company)
         {
             try {
@@ -48,10 +43,6 @@ namespace API.Controllers
             {
                 return BadRequest(e);
             }
-            
         }
-
-     
-
     }
 }

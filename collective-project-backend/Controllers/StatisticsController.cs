@@ -11,9 +11,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("statistics")]
     [ApiController]
-   
     public class StatisticsController: ControllerBase
     {
         private readonly StatisticsService _statisticsService;
@@ -36,7 +34,7 @@ namespace API.Controllers
         }
       
         [HttpGet]
-        [Route("evolution")]
+        [Route("statistics/evolution")]
         public ActionResult<IList<ApplicationsPerYearViewModel>> GetApplicationsPerYear()
         {
 
@@ -74,7 +72,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("general")]
+        [Route("statistics/general")]
         public ActionResult<GeneralStatisticsViewModel> GetGeneralStatistics()
         {
             var generalStatisticsViewModel = new GeneralStatisticsViewModel()
@@ -87,18 +85,18 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("ratings/{CompanyId:int}")]
-        public ActionResult<RatingDTO> GetAverageRatingsCompany(int CompanyId)
+        [Route("statistics/ratings/{companyId}")]
+        public ActionResult<RatingDTO> GetAverageRatingsCompany(int companyId)
         {
-            RatingDTO ratingDTO = _ratingService.getAverageRatings(CompanyId);
+            RatingDTO ratingDTO = _ratingService.getAverageRatings(companyId);
             return Ok(ratingDTO);
         }
 
         [HttpGet]
-        [Route("piechart/{CompanyId:int}")]
-        public ActionResult<PiechartDTO> GetStatisticsPiechart(int CompanyId)
+        [Route("statistics/piechart/{companyId}")]
+        public ActionResult<PiechartDTO> GetStatisticsPiechart(int companyId)
         {
-            return Ok(_ratingService.getStatisticsPiechart(CompanyId));
+            return Ok(_ratingService.getStatisticsPiechart(companyId));
         }
     }
 }
