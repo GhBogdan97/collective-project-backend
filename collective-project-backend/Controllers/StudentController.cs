@@ -200,11 +200,6 @@ namespace API.Controllers
             student.Email = (await _userManager.FindByIdAsync(currentUserId)).Email;
             return Ok(student);
         }
-    }
-		public ActionResult<bool> ExistsRating(int StudentId, int InternshipId)
-		{
-			return Ok(_ratingService.ExistsRating(StudentId, InternshipId));
-		}
 
         [HttpGet]
         [Route("{id}/cv")]
