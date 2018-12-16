@@ -63,6 +63,32 @@ namespace API.Controllers
         }
        
         [HttpGet]
+        [Route("{id:int}/posts")]
+        public ActionResult<PostObjectViewModels> GetPostsForInternship(int id)
+        {
+            try
+            {
+                var posts = _postService.GetPostsForInternship(id);
+                var postViewModels = new List<PostViewModel>();
+                foreach (var post in posts)
+                {
+                    var postModel = PostMapper.ToPostViewModel(post);
+                    postViewModels.Add(postModel);
+                }
+                var postObjects = new PostObjectViewModels()
+                {
+                    Posts = postViewModels
+                };
+                return Ok(postObjects);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
+        }
+
+        [HttpGet]
         [Authorize(Roles="Company")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetAllInternships()
         {
@@ -140,19 +166,21 @@ namespace API.Controllers
 
         [Route("{id:int}/posts")]
         [HttpPost]
-        [Authorize(Roles = "Company")]
+        //[Authorize(Roles = "Company")]
         public IActionResult SavePost([FromBody] PostViewModel postView, int id)
         {
             try
             {
                 var post = PostMapper.ToActualPostObject(postView, id);
-                _postService.SavePost(post);
+                var addedPost=_postService.SavePost(post);
+                postView.Id = addedPost.Id;
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-            return Ok();
+            
+            return Ok(postView);
         }
 
         [HttpGet]
@@ -194,49 +222,5 @@ namespace API.Controllers
             }
 
         }
-
-          
-
-		//[Route("{id}/posts")]
-		//[HttpGet]
-		//[Authorize(Roles = "Company")]
-		//public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
-		//{
-		//	var postsView = new List<PostViewModel>();
-		//	try
-		//	{
-		//		foreach (Post post in _postService.GetPostsForInternship(id))
-		//		{
-		//			postsView.Add(PostMapper.ToViewModel(post));
-		//		}
-		//	}
-		//	catch (Exception e)
-		//	{
-		//		return BadRequest(e.Message);
-		//	}
-		//	return Ok(postsView);
-		//}
-		[HttpGet]
-		[Route("{id:int}/posts")]
-		[Authorize(Roles = "Company")]
-		public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
-		{
-			try
-			{
-				var posts = _postService.GetPostsForInternship(id);
-				var postViewModels = new List<PostViewModel>();
-				foreach (var post in posts)
-				{
-					var postModel = PostMapper.ToPostViewModel(post);
-					postViewModels.Add(postModel);
-				}
-				return Ok(postViewModels);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-
-		}
 	}
 }

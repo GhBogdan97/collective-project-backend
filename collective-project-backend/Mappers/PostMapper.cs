@@ -17,7 +17,8 @@ namespace API.Mappers
                 Date = DateTime.Parse(postView.Date),
                 Title = postView.Title,
                 Last = postView.Last,
-                Image = postView.Image
+                Image = postView.Image,
+                Text=postView.Text
             };
         }
 
@@ -28,8 +29,10 @@ namespace API.Mappers
                 Date = post.Date.ToString(),
                 Title = post.Title,
                 Last = post.Last,
-                Image = post.Image
-			};
+                Image = post.Image,
+                Text=post.Text,
+                Id=post.Id
+            };
         }
     }
 }
