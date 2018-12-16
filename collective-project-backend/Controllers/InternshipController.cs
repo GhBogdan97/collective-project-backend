@@ -56,9 +56,9 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("{id}/students/select")]
-        public async Task<ActionResult<ApplicationForManagementViewModel>> SelectStudentForInternshipAsync(int id,[FromBody] ApplicationForManagementViewModel applicationViewModel)
+        public async Task<ActionResult<ApplicationForManagementViewModel>> SelectStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
         {
-            if(!_applicationService.ExistsApplication(applicationViewModel.Id, id))
+            if (!_applicationService.ExistsApplication(applicationViewModel.Id, id))
             {
                 return BadRequest($"Nu s-a gasit inregistrarea studentului {applicationViewModel.Fullname} la acest internship");
             }
@@ -132,7 +132,7 @@ namespace API.Controllers
             }
             return BadRequest("Studentul nu a fost recunoscut");
         }
-       
+
         [HttpGet]
         [Route("{id:int}/posts")]
         public ActionResult<PostObjectViewModels> GetPostsForInternship(int id)
@@ -156,11 +156,11 @@ namespace API.Controllers
             {
                 return BadRequest(ex.Message);
             }
-           
+
         }
 
         [HttpGet]
-        [Authorize(Roles="Company")]
+        [Authorize(Roles = "Company")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetAllInternships()
         {
             var userId = User.GetUserId();
@@ -201,12 +201,12 @@ namespace API.Controllers
             try
             {
                 var userID = User.GetUserId();
-                if(userID==string.Empty)
+                if (userID == string.Empty)
                 {
                     return BadRequest("Compania nu a fost recunoscuta");
                 }
                 var companyID = _companyService.GetCompanyIdForUser(userID);
-                var addedInternship = _internshipService.AddInternship(InternshipAddMapper.ToInternship(internship,companyID));
+                var addedInternship = _internshipService.AddInternship(InternshipAddMapper.ToInternship(internship, companyID));
 
 
                 return Ok(InternshipMapper.ToViewModel(addedInternship));
@@ -217,7 +217,7 @@ namespace API.Controllers
             }
 
         }
-    
+
         [Route("{id:int}")]
         [HttpPut]
         [Authorize(Roles = "Company")]
@@ -243,14 +243,14 @@ namespace API.Controllers
             try
             {
                 var post = PostMapper.ToActualPostObject(postView, id);
-                var addedPost=_postService.SavePost(post);
+                var addedPost = _postService.SavePost(post);
                 postView.Id = addedPost.Id;
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-            
+
             return Ok(postView);
         }
 
@@ -260,7 +260,7 @@ namespace API.Controllers
         {
             var ratings = _internshipService.GetInternshipRatings(id);
             var testimonials = new List<TestimonialViewModel>();
-            foreach(var rating in ratings)
+            foreach (var rating in ratings)
             {
                 var testimonial = new TestimonialViewModel()
                 {
@@ -276,7 +276,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("details/{id}")]
-        [Authorize(Roles="Company,Student")]
+        [Authorize(Roles = "Company,Student")]
         public ActionResult<InternshipDetailsRatingViewModel> GetInternshipById(int id)
         {
             try
@@ -293,5 +293,16 @@ namespace API.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("availability/{id}")]
+        public IActionResult GetInternshipAvailability(int id)
+        {
+            var internship = _internshipService.GetInternshipById(id);
+            var internshipViewModel = InternshipMapper.ToInternshipManagementViewModel(internship);
+            return Ok(JsonConvert.SerializeObject(internshipViewModel));
+        }
+
+
 	}
 }

@@ -47,5 +47,6 @@ namespace API.Mappers
                 OccupiedPlaces = internship.OccupiedPlaces
             };
         }
+
     }
 }
