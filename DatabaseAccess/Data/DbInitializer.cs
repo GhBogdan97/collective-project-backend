@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -169,6 +170,36 @@ namespace DatabaseAccess.Data
             };
             context.Applications.Add(application3);
             context.SaveChanges();
+
+            string imageFilePath1 = "/DatabaseAccess/Resources/internship2.jpg";
+            string parentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+            Post post1 = new Post()
+            {
+                Title = "Un nou internship",
+                Date = new DateTime(2019, 1, 30),
+                InternshipId = 1,
+                Last = false,
+                Text = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                Image = File.ReadAllBytes(parentDirectory + imageFilePath1)
+        };
+
+            context.Posts.Add(post1);
+            context.SaveChanges();
+
+
+            string imageFilePath2 = "/DatabaseAccess/Resources/internship1.png";
+            Post post2 = new Post()
+            {
+                Title = "Detalii despre selectie",
+                Date = new DateTime(2019, 2, 10),
+                InternshipId = 1,
+                Last = false,
+                Text = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                Image = File.ReadAllBytes(parentDirectory + imageFilePath2)
+            };
+
+            context.Posts.Add(post2);
+            context.SaveChanges();
             #endregion
 
             #region Ratings
@@ -205,6 +236,5 @@ namespace DatabaseAccess.Data
 
             #endregion  
         }
-
     }
 }

@@ -2,6 +2,6 @@
 {
     public enum ApplicationStatus
 	{
-		APLICAT, CONTACTAT, EXAMINAT, APROBAT, PARTICIPANT, RESPINS
-	}
+        APLICAT, CONTACTAT, EXAMINARE, APROBAT, ADMIS, RESPINS
+    }
 }

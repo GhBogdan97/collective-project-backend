@@ -76,7 +76,7 @@ namespace Services
 					throw new Exception("There is no application with student's id = " + application.StudentId 
 						+ " and with internship's id = " + application.InternshipId);
 				}
-				if (application.Status == DatabaseAccess.Enums.ApplicationStatus.PARTICIPANT)
+				if (application.Status == DatabaseAccess.Enums.ApplicationStatus.ADMIS)
 				{
 					foreach (Application a in uow.ApplicationRepository.GetAll())
 					{
