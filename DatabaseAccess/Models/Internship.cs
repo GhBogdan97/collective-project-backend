@@ -23,6 +23,7 @@ namespace DatabaseAccess.Models
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public int Weeks { get; set; }
+        public string Name { get; set; }
 
         public List<Application> Applications { get; set; }
 

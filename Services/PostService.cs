@@ -16,7 +16,7 @@ namespace Services
         {
             _userManager = userManager;
         }
-        public void SavePost(Post post)
+        public Post SavePost(Post post)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
@@ -42,6 +42,7 @@ namespace Services
                 }
 
                 uow.Save();
+                return post;
             }
         }
 
@@ -58,7 +59,7 @@ namespace Services
                 {
                     throw new Exception("Internship inexistent");
                 }
-                return internship.Posts;
+                return internship.Posts.OrderByDescending(p=>p.Date).ToList();
             }
         }
     }

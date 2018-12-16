@@ -32,7 +32,8 @@ namespace API.Mappers
                 Topics = internshipView.Topics,
                 Start = DateTime.Parse(internshipView.Start),
                 End = DateTime.Parse(internshipView.End),
-                Weeks = internshipView.Weeks
+                Weeks = internshipView.Weeks,
+                Name = internshipView.Name
             };
         }
 

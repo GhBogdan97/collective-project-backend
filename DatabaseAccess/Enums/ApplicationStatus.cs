@@ -1,7 +1,7 @@
 ﻿namespace DatabaseAccess.Enums
 {
     public enum ApplicationStatus
-    {
-        PENDING, CONFIRMED, REFUSED
-    }
+	{
+		APLICAT, CONTACTAT, EXAMINARE, APROBAT, ADMIS, RESPINS
+	}
 }
