@@ -150,7 +150,8 @@ namespace DatabaseAccess.Data
             var application1 = new Application()
             {
                 InternshipId=internshipAccesa1.Id,
-                StudentId=simona.Id                
+                StudentId=simona.Id,
+                Status=Enums.ApplicationStatus.APLICAT
             };
             context.Applications.Add(application1);
             context.SaveChanges();
@@ -158,7 +159,8 @@ namespace DatabaseAccess.Data
             var application2 = new Application()
             {
                 InternshipId = internshipAccesa2.Id,
-                StudentId = simona.Id
+                StudentId = simona.Id,
+                Status = Enums.ApplicationStatus.CONTACTAT
             };
             context.Applications.Add(application2);
             context.SaveChanges();
@@ -166,7 +168,8 @@ namespace DatabaseAccess.Data
             var application3 = new Application()
             {
                 InternshipId = internshipAccesa1.Id,
-                StudentId = ionescu.Id
+                StudentId = ionescu.Id,
+                Status = Enums.ApplicationStatus.EXAMINARE
             };
             context.Applications.Add(application3);
             context.SaveChanges();
