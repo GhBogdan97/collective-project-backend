@@ -222,49 +222,5 @@ namespace API.Controllers
             }
 
         }
-
-          
-
-		//[Route("{id}/posts")]
-		//[HttpGet]
-		//[Authorize(Roles = "Company")]
-		//public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
-		//{
-		//	var postsView = new List<PostViewModel>();
-		//	try
-		//	{
-		//		foreach (Post post in _postService.GetPostsForInternship(id))
-		//		{
-		//			postsView.Add(PostMapper.ToViewModel(post));
-		//		}
-		//	}
-		//	catch (Exception e)
-		//	{
-		//		return BadRequest(e.Message);
-		//	}
-		//	return Ok(postsView);
-		//}
-		[HttpGet]
-		[Route("{id:int}/posts")]
-		[Authorize(Roles = "Company")]
-		public ActionResult<List<PostViewModel>> GetPostsForInternship(int id)
-		{
-			try
-			{
-				var posts = _postService.GetPostsForInternship(id);
-				var postViewModels = new List<PostViewModel>();
-				foreach (var post in posts)
-				{
-					var postModel = PostMapper.ToPostViewModel(post);
-					postViewModels.Add(postModel);
-				}
-				return Ok(postViewModels);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-
-		}
 	}
 }
