@@ -63,7 +63,7 @@ namespace Services
             }
         }
 
-        public async Task AproveStudentForInternshipAsync(Student student, Internship internship)
+        public async Task ApproveStudentForInternshipAsync(Student student, Internship internship)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
@@ -75,10 +75,9 @@ namespace Services
                 {
                     throw new Exception("The application doesn't exist!");
                 }
-                app.Status = DatabaseAccess.Enums.ApplicationStatus.ADMIS;
+                app.Status = DatabaseAccess.Enums.ApplicationStatus.APROBAT;
 
                 UpdateApplication(app);
-                RejectOtherApplications(app);
 
                 var user = await _userManager.FindByIdAsync(student.IdUser);
                 EmailSender emailSender = new EmailSender();
@@ -130,17 +129,8 @@ namespace Services
 		public void UpdateApplication(Application application)
 		{
 			using (UnitOfWork uow = new UnitOfWork())
-			{
-				var app = uow.ApplicationRepository.getDbSet().
-					Where(a => (a.StudentId == application.StudentId) && (a.InternshipId == application.InternshipId)).
-					FirstOrDefault();
-
-				if (app == null)
-				{
-					throw new Exception("The application doesn't exist!");
-				}
-
-				uow.ApplicationRepository.UpdateEntity(app);
+            { 
+				uow.ApplicationRepository.UpdateEntity(application);
 				uow.Save();
 			}
 		}
@@ -161,15 +151,14 @@ namespace Services
 				{
 					foreach (Application a in uow.ApplicationRepository.GetAll())
 					{
-                        if (a.InternshipId != application.InternshipId)
+                        if (a.InternshipId != application.InternshipId && a.StudentId!=application.StudentId)
                         {
                             a.Status = DatabaseAccess.Enums.ApplicationStatus.RESPINS;
-                            uow.ApplicationRepository.UpdateEntity(a); 
+                            uow.ApplicationRepository.UpdateEntity(a);
+                            uow.Save();
                         } 
 					}
 				}
-				uow.ApplicationRepository.UpdateEntity(application);
-				uow.Save();
 			}
 		}
 

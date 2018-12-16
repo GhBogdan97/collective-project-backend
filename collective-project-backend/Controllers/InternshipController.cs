@@ -56,7 +56,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("{id}/students/select")]
-        public async Task<IActionResult> SelectStudentForInternshipAsync(int id,[FromBody] ApplicationForManagementViewModel applicationViewModel)
+        public async Task<ActionResult<ApplicationForManagementViewModel>> SelectStudentForInternshipAsync(int id,[FromBody] ApplicationForManagementViewModel applicationViewModel)
         {
             if(!_applicationService.ExistsApplication(applicationViewModel.Id, id))
             {
@@ -66,12 +66,13 @@ namespace API.Controllers
             var student = _studentService.GetStudentById(applicationViewModel.Id);
             var internsip = _internshipService.GetInternshipById(id);
             await _applicationService.SelectStudentForInternshipAsync(student, internsip);
-            return Ok();
+            applicationViewModel.Status = "CONTACTAT";
+            return Ok(JsonConvert.SerializeObject(applicationViewModel));
         }
 
         [HttpPost]
         [Route("{id}/students/aprove")]
-        public async Task<IActionResult> AproveStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
+        public async Task<ActionResult<ApplicationForManagementViewModel>> ApproveStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
         {
             if (!_applicationService.ExistsApplication(applicationViewModel.Id, id))
             {
@@ -80,15 +81,16 @@ namespace API.Controllers
 
             var student = _studentService.GetStudentById(applicationViewModel.Id);
             var internsip = _internshipService.GetInternshipById(id);
-            await _applicationService.AproveStudentForInternshipAsync(student, internsip);
+            await _applicationService.ApproveStudentForInternshipAsync(student, internsip);
             internsip.OccupiedPlaces++;
             _internshipService.UpdateInternship(internsip, id);
-            return Ok();
+            applicationViewModel.Status = "APROBAT";
+            return Ok(JsonConvert.SerializeObject(applicationViewModel));
         }
 
         [HttpPost]
         [Route("{id}/students/reject")]
-        public async Task<IActionResult> RejectStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
+        public async Task<ActionResult<ApplicationForManagementViewModel>> RejectStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
         {
             if (!_applicationService.ExistsApplication(applicationViewModel.Id, id))
             {
@@ -98,7 +100,8 @@ namespace API.Controllers
             var student = _studentService.GetStudentById(applicationViewModel.Id);
             var internsip = _internshipService.GetInternshipById(id);
             await _applicationService.RejectStudentForInternshipAsync(student, internsip);
-            return Ok();
+            applicationViewModel.Status = "RESPINS";
+            return Ok(JsonConvert.SerializeObject(applicationViewModel));
         }
 
         [HttpGet]
