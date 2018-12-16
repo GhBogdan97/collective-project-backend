@@ -124,5 +124,18 @@ namespace Services
 				return student.Id;
 			}
 		}
-	}
+
+        public Student GetStudentByUserId(string idUser)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var student = uow.StudentRepository.getDbSet().Where(s => s.IdUser == idUser).FirstOrDefault();
+                if (student == null)
+                {
+                    throw new Exception("Nu exista student pentru acest user");
+                }
+                return student;
+            }
+        }
+    }
 }

@@ -1,4 +1,6 @@
-﻿using API.ViewModels;
+﻿using API.Mappers;
+using API.ViewModels;
+using DatabaseAccess.DTOs;
 using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -18,16 +20,19 @@ namespace API.Controllers
         private readonly InternshipService _internshipService;
         private readonly StudentService _studentService;
         private readonly CompanyService _companyService;
+        private readonly RatingService _ratingService;
 
         public StatisticsController(StatisticsService statisticsService,
                                     InternshipService internshipService,
                                     StudentService studentService,
-                                    CompanyService companyService)
+                                    CompanyService companyService,
+                                    RatingService ratingService)
         {
             _statisticsService = statisticsService;
             _internshipService = internshipService;
             _studentService = studentService;
             _companyService= companyService;
+            _ratingService = ratingService;
         }
       
         [HttpGet]
@@ -79,6 +84,21 @@ namespace API.Controllers
                 NumberOfInternships = _internshipService.CountInternships()
             };
             return Ok(generalStatisticsViewModel);
+        }
+
+        [HttpGet]
+        [Route("ratings/{CompanyId:int}")]
+        public ActionResult<RatingDTO> GetAverageRatingsCompany(int CompanyId)
+        {
+            RatingDTO ratingDTO = _ratingService.getAverageRatings(CompanyId);
+            return Ok(ratingDTO);
+        }
+
+        [HttpGet]
+        [Route("piechart/{CompanyId:int}")]
+        public ActionResult<PiechartDTO> GetStatisticsPiechart(int CompanyId)
+        {
+            return Ok(_ratingService.getStatisticsPiechart(CompanyId));
         }
     }
 }

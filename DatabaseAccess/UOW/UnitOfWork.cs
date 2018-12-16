@@ -17,7 +17,6 @@ namespace DatabaseAccess.UOW
         IRepository<Rating> _RatingRepository;
 		IRepository<Subscription> _SubscriptionRepository;
 
-
 		public UnitOfWork()
         {
             this._context = new DbContextFactory().CreateDbContext(new string[] { });
@@ -81,7 +80,7 @@ namespace DatabaseAccess.UOW
 		{
 			get
 			{
-				if (RatingRepository == null)
+				if (_RatingRepository == null)
 					_RatingRepository = new Repository<Rating>(_context);
 				return _RatingRepository;
 			}
