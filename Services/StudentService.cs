@@ -9,9 +9,14 @@ namespace Services
 {
     public class StudentService
     {
-        private ApplicationService _applicationService = new ApplicationService();
-        private SubscriptionService _subscriptionService = new SubscriptionService();
+        private readonly ApplicationService _applicationService;
+        private readonly SubscriptionService _subscriptionService;
 
+        public StudentService(ApplicationService applicationService, SubscriptionService subscriptionService)
+        {
+            _applicationService = applicationService;
+            _subscriptionService = subscriptionService;
+        }
 
         public IList<Student> GetAllStudents()
         {

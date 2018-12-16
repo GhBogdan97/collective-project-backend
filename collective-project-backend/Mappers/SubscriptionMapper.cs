@@ -10,9 +10,6 @@ namespace API.Mappers
 {
 	public class SubscriptionMapper
 	{
-		private static CompanyService _companyService = new CompanyService();
-		private static StudentService _studentService = new StudentService();
-
 		public static SubscriptionViewModel ToViewModel(Subscription subscription)
 		{
 			return new SubscriptionViewModel()
@@ -27,9 +24,7 @@ namespace API.Mappers
 			return new Subscription()
 			{
 				CompanyId = subscriptionViewModel.CompanyId,
-				Company = _companyService.GetCompanyById(subscriptionViewModel.CompanyId),
 				StudentId = subscriptionViewModel.StudentId,
-				Student = _studentService.GetStudentById(subscriptionViewModel.StudentId)
 			};
 		}
 	}

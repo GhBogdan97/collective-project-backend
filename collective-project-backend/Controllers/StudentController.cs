@@ -132,7 +132,7 @@ namespace API.Controllers
 			try
 			{
 				var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
-				_applicationService.UpdateApplication(application);
+				_applicationService.RejectOtherApplications(application);
 			}
 			catch (Exception e)
 			{
@@ -148,8 +148,7 @@ namespace API.Controllers
 		{
 			try
 			{
-				var subscription = SubscriptionMapper.ToActualObject(subscriptionView);
-				_subscriptionService.AddSubscription(subscription);
+				_subscriptionService.AddSubscription(subscriptionView.CompanyId, subscriptionView.StudentId);
 			}
 			catch (Exception e)
 			{
@@ -158,15 +157,14 @@ namespace API.Controllers
 			return Ok();
 		}
 
-		[HttpPut]
+		[HttpDelete]
 		[Route("subscriptions")]
 		[Authorize(Roles = "Student")]
 		public IActionResult UpdateSubscription([FromBody] SubscriptionViewModel subscriptionView)
 		{
 			try
 			{
-				var subscription = SubscriptionMapper.ToActualObject(subscriptionView);
-				_subscriptionService.UpdateSubscription(subscription);
+				_subscriptionService.DeleteSubscription(subscriptionView.CompanyId, subscriptionView.StudentId);
 			}
 			catch (Exception e)
 			{

@@ -26,7 +26,7 @@ namespace DatabaseAccess.Data
 
         public static async Task Seed(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-
+            await userManager.CreateAsync(new ApplicationUser { Email = "bogdan_2101@yahoo.com", UserName = "bogdan_2101@yahoo.com" }, "Password123.");
             await userManager.CreateAsync(new ApplicationUser { Email = "simonaburlacu01@gmail.com", UserName = "simonaburlacu01@gmail.com" }, "Password123.");
             await userManager.CreateAsync(new ApplicationUser { Email = "testStudent1@email.com", UserName = "testStudent1@email.com" }, "Password123.");
             await userManager.CreateAsync(new ApplicationUser { Email = "testCompanyUser1@email.com", UserName = "testCompanyUser1@email.com" }, "Password123.");
@@ -37,6 +37,7 @@ namespace DatabaseAccess.Data
 
             var student1 = await userManager.FindByEmailAsync("simonaburlacu01@gmail.com");
             var student2 = await userManager.FindByEmailAsync("testStudent1@email.com");
+            var student3 = await userManager.FindByEmailAsync("bogdan_2101@yahoo.com");
             var company1 = await userManager.FindByEmailAsync("testCompanyUser1@email.com");
             var company2 = await userManager.FindByEmailAsync("testCompanyUser2@email.com");
 
@@ -46,6 +47,7 @@ namespace DatabaseAccess.Data
             #region Set Roles
             await userManager.AddToRoleAsync(student1, roleStudent.Name);
             await userManager.AddToRoleAsync(student2, roleStudent.Name);
+            await userManager.AddToRoleAsync(student3, roleStudent.Name);
             await userManager.AddToRoleAsync(company1, roleCompany.Name);
             await userManager.AddToRoleAsync(company2, roleCompany.Name);
             #endregion
@@ -72,6 +74,16 @@ namespace DatabaseAccess.Data
                     Specialization = "Informatica-Romana",
                     Year = 2,
                     IdUser = student2.Id
+                },
+                new Student()
+                {
+                    Firstname = "Bogdan",
+                    Lastname = "Gheorghe",
+                    University = "UBB",
+                    College = "Facultatea de Matematica-Informatica",
+                    Specialization = "Informatica-Romana",
+                    Year = 3,
+                    IdUser = student3.Id
                 }
             };
             #endregion
@@ -145,6 +157,7 @@ namespace DatabaseAccess.Data
 
             var simona = context.Students.Where(s => s.Firstname == "Simona").FirstOrDefault();
             var ionescu= context.Students.Where(s => s.Firstname == "Ionescu").FirstOrDefault();
+            var bogdan = context.Students.Where(s => s.Firstname == "Bogdan").FirstOrDefault();
 
             #region Applications
             var application1 = new Application()
@@ -172,6 +185,15 @@ namespace DatabaseAccess.Data
                 Status = Enums.ApplicationStatus.EXAMINARE
             };
             context.Applications.Add(application3);
+            context.SaveChanges();
+
+            var application4 = new Application()
+            {
+                InternshipId = internshipAccesa1.Id,
+                StudentId = bogdan.Id,
+                Status = Enums.ApplicationStatus.CONTACTAT
+            };
+            context.Applications.Add(application4);
             context.SaveChanges();
 
             string imageFilePath1 = "/DatabaseAccess/Resources/internship2.jpg";

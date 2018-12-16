@@ -201,7 +201,10 @@ namespace Services
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
-				return uow.InternshipRepository.GetById(id);
+                return uow.InternshipRepository.getDbSet()
+                    .Where(i => i.Id == id)
+                    .Include(i => i.Company)
+                    .FirstOrDefault();
 			}
 		}
 	}
