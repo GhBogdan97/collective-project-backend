@@ -13,7 +13,6 @@ using Services;
 
 namespace API.Controllers
 {
-    [Route("internships")]
     [ApiController]
     [Authorize]
     public class InternshipController : ControllerBase
@@ -34,7 +33,7 @@ namespace API.Controllers
 
         
         [HttpGet]
-        [Route("student")]
+        [Route("internships/student")]
         [Authorize(Roles = "Student")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent()
         {
@@ -63,7 +62,7 @@ namespace API.Controllers
         }
        
         [HttpGet]
-        [Route("{id:int}/posts")]
+        [Route("internships/{id}/posts")]
         public ActionResult<PostObjectViewModels> GetPostsForInternship(int id)
         {
             try
@@ -89,6 +88,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Route("internships")]
         [Authorize(Roles="Company")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetAllInternships()
         {
@@ -119,7 +119,7 @@ namespace API.Controllers
 
 
         [HttpPost]
-        [Route("add")]
+        [Route("internships/add")]
         [Authorize(Roles = "Company")]
         public ActionResult<InternshipMainAttributesViewModel> AddInternship(InternshipAddViewModel internship)
         {
@@ -146,9 +146,9 @@ namespace API.Controllers
             }
 
         }
-    
-        [Route("{id:int}")]
+
         [HttpPut]
+        [Route("internships/{id}")]    
         [Authorize(Roles = "Company")]
         public IActionResult UpdateInternship([FromBody] InternshipMainAttributesViewModel internshipView, int id)
         {
@@ -164,8 +164,8 @@ namespace API.Controllers
             return Ok();
         }
 
-        [Route("{id:int}/posts")]
         [HttpPost]
+        [Route("internships/{id}/posts")]
         //[Authorize(Roles = "Company")]
         public IActionResult SavePost([FromBody] PostViewModel postView, int id)
         {
@@ -184,7 +184,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("{id}/testimonials")]
+        [Route("internships/{id}/testimonials")]
         public ActionResult<List<TestimonialViewModel>> GetTestimonialForInternship(int id)
         {
             var ratings = _internshipService.GetInternshipRatings(id);
@@ -204,7 +204,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("details/{id}")]
+        [Route("internships/details/{id}")]
         [Authorize(Roles="Company,Student")]
         public ActionResult<InternshipDetailsRatingViewModel> GetInternshipById(int id)
         {

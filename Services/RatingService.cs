@@ -125,9 +125,9 @@ namespace Services
                 var internships = uow.InternshipRepository.getDbSet()
                     .Where(i => i.CompanyId == companyId);
                 var participants = uow.ApplicationRepository.getDbSet()
-                    .Where(a => a.Status == DatabaseAccess.Enums.ApplicationStatus.PARTICIPANT);
+                    .Where(a => a.Status == DatabaseAccess.Enums.ApplicationStatus.ADMIS);
                 var applicants = uow.ApplicationRepository.getDbSet()
-                    .Where(a => a.Status != DatabaseAccess.Enums.ApplicationStatus.PARTICIPANT);
+                    .Where(a => a.Status != DatabaseAccess.Enums.ApplicationStatus.ADMIS);
                 foreach (var participant in participants)
                 {
                     foreach (var internship in internships)
