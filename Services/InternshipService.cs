@@ -78,6 +78,26 @@ namespace Services
             }
         }
 
+        public string GetCompanyNameForInternship(Internship internship)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var companyDb = uow.CompanyRepository.getDbSet()
+                    .Where(c => c.Id == internship.CompanyId)
+                    .FirstOrDefault();
+                return companyDb.Name;
+            }
+        }
+
+        public string GetStatusForStudentInternship(Internship internship, int studentId)
+        {
+            using(UnitOfWork uow = new UnitOfWork())
+            {
+                var applicationDb = uow.ApplicationRepository.getDbSet().Where(a => a.InternshipId == internship.Id && a.StudentId == studentId).FirstOrDefault();
+                return applicationDb.Status.ToString();
+            }
+        }
+
         public IList<Internship> GetInternshipsForStudent(int id)
         {
             using (UnitOfWork uow = new UnitOfWork())
