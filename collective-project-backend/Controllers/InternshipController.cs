@@ -37,7 +37,8 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("{id}/management")]
+        [Route("internships/{id}/management")]
+        [AllowAnonymous]
         //[Authorize(Roles = "Company")]
         public ActionResult<List<ApplicationForManagementViewModel>> GetStudentManagementDetails(int id)
         {
@@ -295,7 +296,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("availability/{id}")]
+        [Route("internships/availability/{id}")]
         public IActionResult GetInternshipAvailability(int id)
         {
             var internship = _internshipService.GetInternshipById(id);

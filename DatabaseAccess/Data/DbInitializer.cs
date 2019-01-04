@@ -53,6 +53,13 @@ namespace DatabaseAccess.Data
             #endregion
 
             #region Students
+            FileStream fStream = File.OpenRead(@"D:\Downloads\cv.pdf");
+
+            byte[] contents = new byte[fStream.Length];
+
+            fStream.Read(contents, 0, (int)fStream.Length);
+
+            fStream.Close();
             List<Student> students = new List<Student> {
                 new Student()
                 {
@@ -61,7 +68,7 @@ namespace DatabaseAccess.Data
                     University = "UBB",
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
-                    Cv = System.IO.File.ReadAllBytes("E:\\Downloads\\cvExample.pdf"),
+                    Cv = contents,
                     Year = 3,
                     IdUser = student1.Id
                 },

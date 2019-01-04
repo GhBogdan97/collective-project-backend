@@ -50,7 +50,7 @@ namespace API.Controllers
 
 		[HttpGet]
 		[Route("students/internship/{internshipId}")]
-		//[Authorize(Roles = "Company")]
+		[Authorize(Roles = "Company")]
 		public ActionResult<List<StudentViewModel>> GetStudentsByInternshipId(int internshipId)
 		{
 			var studentsByInternship = _studentService.GetStudentsByInternshipId(internshipId);
@@ -128,7 +128,7 @@ namespace API.Controllers
 
 		[HttpPut]
 		[Route("students/applications")]
-		//[Authorize(Roles = "Student")]
+		[Authorize(Roles = "Student")]
 		public IActionResult UpdateApplication([FromBody] ApplicationViewModel applicationView)
 		{
 			try
@@ -177,7 +177,7 @@ namespace API.Controllers
 
 		[HttpGet]
 		[Route("students/applications/{studentId}/{internshipId}")]
-		//[Authorize(Roles = "Company")]
+		[Authorize(Roles = "Company")]
 		public ActionResult<bool> ExistsApplication(int studentId, int internshipId)
 		{
 			return Ok(_applicationService.ExistsApplication(studentId, internshipId));
@@ -185,7 +185,7 @@ namespace API.Controllers
 
 		[HttpGet]
 		[Route("students/ratings/{studentId}/{internshipId}")]
-		//[Authorize(Roles = "Company")]
+		[Authorize(Roles = "Company")]
 		public ActionResult<bool> ExistsRating(int studentId, int internshipId)
 		{
 			return Ok(_ratingService.ExistsRating(studentId, internshipId));
@@ -193,7 +193,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("students/userInfo/{currentUserId}")]
-        //[Authorize(Roles = "Student")]
+        [Authorize(Roles = "Student")]
         public async Task<ActionResult<List<StudentViewModel>>> GetCurrentUserDetails(string currentUserId)
         {
             var student = StudentMapper.ToViewModel(_studentService.GetStudentByUserId(currentUserId));
@@ -202,17 +202,17 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("{id}/cv")]
+        [Route("students/{id}/cv")]
         public IActionResult GetCV(int id)
         {
             var student = _studentService.GetStudentById(id);
             if (student == null)
                 return BadRequest("Studentul nu exista");
             Stream stream = new MemoryStream(student.Cv);
-            var resultStream = new FileStreamResult(stream, "application/pdf");
+            var resultStream = new FileStreamResult(stream, "application/octet-stream");
             var cv = new CvViewModel() { Id = student.Id, Cv = student.Cv };
-
-            return Ok(JsonConvert.SerializeObject(cv));
+            
+            return File(stream, "application/octet-stream");
         }
     }
 }
