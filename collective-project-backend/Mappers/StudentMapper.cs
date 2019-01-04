@@ -41,8 +41,9 @@ namespace API.Mappers
 
 		public static Student ToActualObject(StudentViewModel studentViewModel)
 		{
-			return new Student()
-			{
+            return new Student()
+            {
+                Id = studentViewModel.Id,
 				Firstname = studentViewModel.Firstname,
 				Lastname = studentViewModel.Lastname,
 				University = studentViewModel.University,

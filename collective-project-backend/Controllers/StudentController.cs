@@ -100,7 +100,10 @@ namespace API.Controllers
 		{
 			try
 			{
-				var student = StudentMapper.ToActualObject(studentView);
+                var idUser = User.GetUserId();
+                var studentId = _studentService.GetStudentIdForUser(idUser);
+                var student = StudentMapper.ToActualObject(studentView);
+                student.Id = studentId;
 				_studentService.UpdateStudent(student);
 			}
 			catch (Exception e)
@@ -110,6 +113,25 @@ namespace API.Controllers
 			return Ok();
 		}
 
+        [HttpGet]
+        [Route("student")]
+        [Authorize(Roles = "Student")]
+        public ActionResult<StudentViewModel> GetStudentUser()
+        {
+            try
+            {
+                var studentId = User.GetUserId();
+                var student = _studentService.GetStudentByUserId(studentId);
+                var studentViewModel = StudentMapper.ToViewModel(student);
+                return Ok(studentViewModel);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
 		[HttpPost]
 		[Route("students/applications")]
 		[Authorize(Roles = "Student")]
@@ -117,6 +139,7 @@ namespace API.Controllers
 		{
 			try
 			{
+                string id = User.GetUserId();
 				var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
 				_applicationService.AddApplication(application);
 			}

@@ -33,12 +33,37 @@ namespace Services
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
-                if (uow.StudentRepository.GetById(student.Id) == null)
+                Console.WriteLine("Id: "+student.Id);
+                /*if (uow.StudentRepository.GetById(student.Id) == null)
                 {
                     throw new Exception("There is no student with id = " + student.Id);
+                }*/
+
+                var studentDb = uow.StudentRepository.getDbSet()
+                    .Where(i => i.Id == student.Id)
+                    .FirstOrDefault();
+
+                if (studentDb == null)
+                {
+                    throw new Exception("Student inexistent");
                 }
-                uow.StudentRepository.UpdateEntity(student);
+
+                studentDb.Firstname = student.Firstname ?? studentDb.Firstname;
+                studentDb.Lastname = student.Lastname ?? studentDb.Lastname;
+                studentDb.University = student.University ?? studentDb.University;
+                studentDb.Specialization = student.Specialization ?? studentDb.Specialization;
+                studentDb.College = student.College ?? studentDb.College;
+                if (student.Cv != null) studentDb.Cv = student.Cv;
+
+                if (student.Year != studentDb.Year)
+                {
+                    studentDb.Year = student.Year;
+                }
+
+                uow.StudentRepository.UpdateEntity(studentDb);
                 uow.Save();
+
+           
             }
         }
 
@@ -129,7 +154,8 @@ namespace Services
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
-                var student = uow.StudentRepository.getDbSet().Where(s => s.IdUser == idUser).FirstOrDefault();
+                var idUserz = idUser;
+                var student = uow.StudentRepository.getDbSet().Where(s => s.IdUser.Equals(idUser)).FirstOrDefault();
                 if (student == null)
                 {
                     throw new Exception("Nu exista student pentru acest user");
