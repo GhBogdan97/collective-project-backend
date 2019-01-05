@@ -244,8 +244,13 @@ namespace API.Controllers
                 {
                     var companyId = _companyService.GetCompanyIdForUser(userId);
                     var internshipsDB = _internshipService.GetInternshipsForCompany(companyId);
+                    var closedInternships = internshipsDB.Where(i => i.End <= DateTime.Now)
+                                            .OrderByDescending(i=>i.End);
+                    var activeInternships = internshipsDB.Where(i => i.End > DateTime.Now)
+                                            .OrderBy(i=>i.End);
+                    var sortedInternships = activeInternships.Union(closedInternships);
                     var viewModels = new List<InternshipMainAttributesViewModel>();
-                    foreach (var internship in internshipsDB)
+                    foreach (var internship in sortedInternships)
                     {
                         var viewModel = Mappers.InternshipMapper.ToViewModel(internship);
                         viewModels.Add(viewModel);

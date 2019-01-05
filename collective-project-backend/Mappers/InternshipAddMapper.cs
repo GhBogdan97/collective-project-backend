@@ -24,7 +24,8 @@ namespace API.Mappers
                 Start = start,
                 End = end,
                 Weeks = internshipAddViewModel.Weeks,
-                Topics = internshipAddViewModel.Topics
+                Topics = internshipAddViewModel.Topics,
+                Name=internshipAddViewModel.Name
             };
         }
     }

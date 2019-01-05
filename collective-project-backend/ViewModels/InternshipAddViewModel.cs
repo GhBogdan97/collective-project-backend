@@ -13,5 +13,6 @@ namespace API.ViewModels
         public string Start { get; set; }
         public string End { get; set; }
         public int Weeks { get; set; }
+        public string Name { get; set; }
     }
 }

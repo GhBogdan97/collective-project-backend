@@ -17,7 +17,7 @@ using API.ViewModels;
 
 namespace collective_project_backend.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("account")]
     public class AccountController : Controller
     {
