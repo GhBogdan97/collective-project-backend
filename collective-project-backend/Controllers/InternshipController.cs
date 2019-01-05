@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace API.Controllers
 {
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class InternshipController : ControllerBase
     {
 
@@ -86,7 +86,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("{id}/students/select")]
+        [Route("internships/{id}/students/select")]
         public async Task<ActionResult<ApplicationForManagementViewModel>> SelectStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
         {
             if (!_applicationService.ExistsApplication(applicationViewModel.Id, id))
@@ -102,7 +102,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("{id}/students/aprove")]
+        [Route("internships/{id}/students/aprove")]
         public async Task<ActionResult<ApplicationForManagementViewModel>> ApproveStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
         {
             if (!_applicationService.ExistsApplication(applicationViewModel.Id, id))
@@ -120,7 +120,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Route("{id}/students/reject")]
+        [Route("internships/{id}/students/reject")]
         public async Task<ActionResult<ApplicationForManagementViewModel>> RejectStudentForInternshipAsync(int id, [FromBody] ApplicationForManagementViewModel applicationViewModel)
         {
             if (!_applicationService.ExistsApplication(applicationViewModel.Id, id))
@@ -244,8 +244,13 @@ namespace API.Controllers
                 {
                     var companyId = _companyService.GetCompanyIdForUser(userId);
                     var internshipsDB = _internshipService.GetInternshipsForCompany(companyId);
+                    var closedInternships = internshipsDB.Where(i => i.End <= DateTime.Now)
+                                            .OrderByDescending(i=>i.End);
+                    var activeInternships = internshipsDB.Where(i => i.End > DateTime.Now)
+                                            .OrderBy(i=>i.End);
+                    var sortedInternships = activeInternships.Union(closedInternships);
                     var viewModels = new List<InternshipMainAttributesViewModel>();
-                    foreach (var internship in internshipsDB)
+                    foreach (var internship in sortedInternships)
                     {
                         var viewModel = Mappers.InternshipMapper.ToViewModel(internship);
                         viewModels.Add(viewModel);

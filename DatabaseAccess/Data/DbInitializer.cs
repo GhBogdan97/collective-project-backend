@@ -135,7 +135,6 @@ namespace DatabaseAccess.Data
             var accesa = context.Companies.Where(c => c.Name == "Accesa").FirstOrDefault();
             Internship internshipAccesa1 = new Internship()
             {
-
                 Description = "Internship React",
                 Places = 8,
                 Topics = "React, JavaScript",
@@ -154,16 +153,47 @@ namespace DatabaseAccess.Data
                 Topics = "Azure functions, Serverless",
                 Start = new DateTime(2017, 10, 3),
                 End = new DateTime(2017, 11, 3),
-                Name= "Internship Title",
+                Name= "Internship Cloud",
                 Weeks = 2,
                 CompanyId=accesa.Id
             };
+
+            Internship internshipAccesa3 = new Internship()
+            {
+
+                Description = "Internship Mobile",
+                Places = 8,
+                Topics = "React Native, Android",
+                Start = new DateTime(2019,1, 1),
+                End = new DateTime(2019, 5, 1),
+                Name = "Internship Aplicatii Mobile",
+                Weeks = 16,
+                CompanyId = accesa.Id
+            };
+
+            Internship internshipAccesa4 = new Internship()
+            {
+
+                Description = "Internship Machine Learning",
+                Places = 8,
+                Topics = "AI, ML, Deep Learning",
+                Start = new DateTime(2019, 1, 1),
+                End = new DateTime(2019, 3, 1),
+                Name = "Internship Inteligenta Artificiala",
+                Weeks = 8,
+                CompanyId = accesa.Id
+            };
+
             context.Internships.Add(internshipAccesa1);
             context.Internships.Add(internshipAccesa2);
+            context.Internships.Add(internshipAccesa3);
+            context.Internships.Add(internshipAccesa4);
             context.SaveChanges();
 
             accesa.Internships.Add(internshipAccesa1);
             accesa.Internships.Add(internshipAccesa2);
+            accesa.Internships.Add(internshipAccesa3);
+            accesa.Internships.Add(internshipAccesa4);
             context.SaveChanges();
             #endregion
 

@@ -19,7 +19,8 @@ namespace API.Mappers
                 Topics = internship.Topics,
                 Weeks = internship.Weeks,
                 End = internship.End.Date.ToShortDateString(),
-                Start = internship.Start.Date.ToShortDateString()
+                Start = internship.Start.Date.ToShortDateString(),
+                Name=internship.Name
             };
         }
 
@@ -42,7 +43,7 @@ namespace API.Mappers
             return new InternshipManagementViewModel()
             {
                 Id = internship.Id,
-                Name = internship.Description, //TO DO change to name after merge
+                Name = internship.Name, 
                 TotalPlaces = internship.Places,
                 OccupiedPlaces = internship.OccupiedPlaces
             };
@@ -53,7 +54,7 @@ namespace API.Mappers
             return new InternshipForManagementViewModel()
             {
                 Id = internship.Id,
-                Name = internship.Description,
+                Name = internship.Name,
                 Status = status,
                 Company = companyName
             };

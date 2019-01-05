@@ -51,6 +51,11 @@ namespace collective_project_backend
                     context.Response.StatusCode = 401;
                     return Task.CompletedTask;
                 };
+                options.Events.OnRedirectToAccessDenied = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
             });
 
 
