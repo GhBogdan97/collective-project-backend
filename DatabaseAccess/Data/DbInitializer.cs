@@ -12,6 +12,8 @@ namespace DatabaseAccess.Data
 {
     public static class DbInitializer
     {
+        private static string parentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
+
         public static async Task Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             context.Database.Migrate();
@@ -53,6 +55,14 @@ namespace DatabaseAccess.Data
             #endregion
 
             #region Students
+            string cvFilePath1 = "/DatabaseAccess/Resources/CVs/cv.pdf";
+            //FileStream fStream = 
+
+            byte[] contents = File.ReadAllBytes(parentDirectory + cvFilePath1);
+
+            //fStream.Read(contents, 0, (int)fStream.Length);
+
+            //fStream.Close();
             List<Student> students = new List<Student> {
                 new Student()
                 {
@@ -61,7 +71,7 @@ namespace DatabaseAccess.Data
                     University = "UBB",
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
-                    Cv = System.IO.File.ReadAllBytes("E:\\Downloads\\cvExample.pdf"),
+                    Cv = contents,
                     Year = 3,
                     IdUser = student1.Id
                 },
@@ -73,6 +83,7 @@ namespace DatabaseAccess.Data
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
                     Year = 2,
+                    Cv = contents,
                     IdUser = student2.Id
                 },
                 new Student()
@@ -83,6 +94,7 @@ namespace DatabaseAccess.Data
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
                     Year = 3,
+                    Cv=contents,
                     IdUser = student3.Id
                 }
             };
@@ -197,7 +209,6 @@ namespace DatabaseAccess.Data
             context.SaveChanges();
 
             string imageFilePath1 = "/DatabaseAccess/Resources/internship2.jpg";
-            string parentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).FullName;
             Post post1 = new Post()
             {
                 Title = "Un nou internship",
