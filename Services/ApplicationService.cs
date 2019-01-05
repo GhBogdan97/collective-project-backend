@@ -108,6 +108,63 @@ namespace Services
             }
         }
 
+        public void RejectInternshipForStudent(int idStudent, int idInternship)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var app = uow.ApplicationRepository.getDbSet().
+                    Where(a => (a.StudentId == idStudent) && (a.InternshipId == idInternship))
+                    .FirstOrDefault();
+
+                if (app == null)
+                {
+                    throw new Exception("The application doesn't exist!");
+                }
+
+                app.Status = DatabaseAccess.Enums.ApplicationStatus.RESPINS;
+                UpdateApplication(app);
+
+            }
+        }
+
+        public void ConfirmInternshipExamAttendanceForStudent(int idStudent, int idInternship)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var app = uow.ApplicationRepository.getDbSet().
+                    Where(a => (a.StudentId == idStudent) && (a.InternshipId == idInternship))
+                    .FirstOrDefault();
+
+                if (app == null)
+                {
+                    throw new Exception("The application doesn't exist!");
+                }
+
+                app.Status = DatabaseAccess.Enums.ApplicationStatus.EXAMINARE;
+                UpdateApplication(app);
+
+            }
+        }
+
+        public void ConfirmInternshipParticipationForStudent(int idStudent, int idInternship)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var app = uow.ApplicationRepository.getDbSet().
+                    Where(a => (a.StudentId == idStudent) && (a.InternshipId == idInternship))
+                    .FirstOrDefault();
+
+                if (app == null)
+                {
+                    throw new Exception("The application doesn't exist!");
+                }
+
+                app.Status = DatabaseAccess.Enums.ApplicationStatus.ADMIS;
+                UpdateApplication(app);
+
+            }
+        }
+
         public void AddApplication(Application application)
 		{
 			using (UnitOfWork uow = new UnitOfWork())
