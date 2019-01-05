@@ -36,5 +36,28 @@ namespace API.Mappers
                 Name = internshipView.Name
             };
         }
+
+        public static InternshipManagementViewModel ToInternshipManagementViewModel(Internship internship)
+        {
+            return new InternshipManagementViewModel()
+            {
+                Id = internship.Id,
+                Name = internship.Description, //TO DO change to name after merge
+                TotalPlaces = internship.Places,
+                OccupiedPlaces = internship.OccupiedPlaces
+            };
+        }
+
+        public static InternshipForManagementViewModel ToInternshipManagement(Internship internship, string status, string companyName)
+        {
+            return new InternshipForManagementViewModel()
+            {
+                Id = internship.Id,
+                Name = internship.Description,
+                Status = status,
+                Company = companyName
+            };
+        }
+
     }
 }

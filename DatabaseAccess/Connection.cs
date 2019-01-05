@@ -6,7 +6,7 @@
         {
             get
             {
-                return "Data Source=DESKTOP-CEF39OK;Initial Catalog=Internship1;Integrated Security=True;";
+                return "Data Source=DESKTOP-FP7P83V;Initial Catalog=Internship1;Integrated Security=True;";
             }
         }
     }

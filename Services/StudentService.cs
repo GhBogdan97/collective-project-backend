@@ -1,5 +1,6 @@
 ﻿using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,30 @@ namespace Services
 {
     public class StudentService
     {
-        private ApplicationService _applicationService = new ApplicationService();
-        private SubscriptionService _subscriptionService = new SubscriptionService();
+        private readonly ApplicationService _applicationService;
+        private readonly SubscriptionService _subscriptionService;
 
+        public StudentService(ApplicationService applicationService, SubscriptionService subscriptionService)
+        {
+            _applicationService = applicationService;
+            _subscriptionService = subscriptionService;
+        }
 
         public IList<Student> GetAllStudents()
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
                 return uow.StudentRepository.GetAll();
+            }
+        }
+        public Student GetStudentById(int id)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.StudentRepository.getDbSet()
+                    .Where(s => s.Id == id)
+                    .Include(s => s.Applications)
+                    .FirstOrDefault();
             }
         }
 
@@ -113,19 +129,6 @@ namespace Services
                 }
             }
             return studentsByCompanyId;
-        }
-
-        public Student GetStudentById(int id)
-        {
-            using (UnitOfWork uow = new UnitOfWork())
-            {
-                var student = uow.StudentRepository.GetById(id);
-                if (student == null)
-                {
-                    throw new Exception("There is no student with id = " + id);
-                }
-                return student;
-            }
         }
 
 		public int CountStudents()

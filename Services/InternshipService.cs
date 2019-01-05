@@ -51,6 +51,7 @@ namespace Services
                 internshipDb.Topics = internship.Topics ?? internshipDb.Topics;
                 internshipDb.Description = internship.Description ?? internshipDb.Description;
                 internshipDb.Name = internship.Name ?? internshipDb.Name;
+                internshipDb.OccupiedPlaces = internship.OccupiedPlaces;
                 uow.InternshipRepository.UpdateEntity(internshipDb);
 
                 foreach (var application in internshipDb.Applications)
@@ -74,6 +75,26 @@ namespace Services
                 if (uow.CompanyRepository.GetById(id) == null)
                     throw new Exception($"Compania cu id-ul {id} nu exista");
                 return uow.InternshipRepository.getDbSet().Where(i => i.CompanyId == id).ToList();
+            }
+        }
+
+        public string GetCompanyNameForInternship(Internship internship)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var companyDb = uow.CompanyRepository.getDbSet()
+                    .Where(c => c.Id == internship.CompanyId)
+                    .FirstOrDefault();
+                return companyDb.Name;
+            }
+        }
+
+        public string GetStatusForStudentInternship(Internship internship, int studentId)
+        {
+            using(UnitOfWork uow = new UnitOfWork())
+            {
+                var applicationDb = uow.ApplicationRepository.getDbSet().Where(a => a.InternshipId == internship.Id && a.StudentId == studentId).FirstOrDefault();
+                return applicationDb.Status.ToString();
             }
         }
 
@@ -201,7 +222,10 @@ namespace Services
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
-				return uow.InternshipRepository.GetById(id);
+                return uow.InternshipRepository.getDbSet()
+                    .Where(i => i.Id == id)
+                    .Include(i => i.Company)
+                    .FirstOrDefault();
 			}
 		}
 	}
