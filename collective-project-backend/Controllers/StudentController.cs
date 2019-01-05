@@ -203,6 +203,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("students/{id}/cv")]
+        [Authorize(Roles = "Student,Company")]
         public IActionResult GetCV(int id)
         {
             var student = _studentService.GetStudentById(id);

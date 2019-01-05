@@ -38,8 +38,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("internships/{id}/management")]
-        [AllowAnonymous]
-        //[Authorize(Roles = "Company")]
+        [Authorize(Roles = "Company")]
         public ActionResult<List<ApplicationForManagementViewModel>> GetStudentManagementDetails(int id)
         {
             var applications = _applicationService.GetApplicationsForInternship(id);
@@ -238,7 +237,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("internships/{id}/posts")]
-        //[Authorize(Roles = "Company")]
+        [Authorize(Roles = "Company")]
         public IActionResult SavePost([FromBody] PostViewModel postView, int id)
         {
             try
