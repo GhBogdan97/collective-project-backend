@@ -46,6 +46,11 @@ namespace collective_project_backend
                 options.Cookie.SameSite = SameSiteMode.None;
                 options.Cookie.IsEssential = true;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
             });
 
 

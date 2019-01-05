@@ -37,8 +37,8 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("{id}/management")]
-        //[Authorize(Roles = "Company")]
+        [Route("internships/{id}/management")]
+        [Authorize(Roles = "Company")]
         public ActionResult<List<ApplicationForManagementViewModel>> GetStudentManagementDetails(int id)
         {
             var applications = _applicationService.GetApplicationsForInternship(id);
@@ -316,7 +316,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("internships/{id}/posts")]
-        //[Authorize(Roles = "Company")]
+        [Authorize(Roles = "Company")]
         public IActionResult SavePost([FromBody] PostViewModel postView, int id)
         {
             try
@@ -374,7 +374,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("availability/{id}")]
+        [Route("internships/availability/{id}")]
         public IActionResult GetInternshipAvailability(int id)
         {
             var internship = _internshipService.GetInternshipById(id);
