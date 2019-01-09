@@ -136,50 +136,93 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        [Route("internships/{id}/students/{id2}/refuse")]
-        public ActionResult<InternshipForManagementViewModel> RejectInternshipForStudentAsync(int id, int id2, [FromBody] InternshipForManagementViewModel internshipViewModel)
+        [Route("internships/students/refuse")]
+        public ActionResult<InternshipForManagementViewModel> RejectInternshipForStudentAsync([FromBody] InternshipForManagementViewModel internshipViewModel)
         {
-            if (!_applicationService.ExistsApplication(id2, id))
+            
+            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
+            if (claim != null)
             {
-                return BadRequest("Nu s-a gasit inregistrarea studentului pentru acest internship");
-            }
+                var userId = claim.Value;
+                try
+                {
+                    var studentId = _studentService.GetStudentIdForUser(userId);
+                    if (!_applicationService.ExistsApplication(studentId, internshipViewModel.Id))
+                    {
+                        return BadRequest("Nu s-a gasit inregistrarea studentului pentru acest internship");
+                    }
 
-            _applicationService.RejectInternshipForStudent(id2, id);
-            internshipViewModel.Status = "RESPINS";
-            return Ok(JsonConvert.SerializeObject(internshipViewModel));
+                    _applicationService.RejectInternshipForStudent(studentId, internshipViewModel.Id);
+                    internshipViewModel.Status = "RESPINS";
+                    return Ok(JsonConvert.SerializeObject(internshipViewModel));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest("Studentul nu a fost recunoscut");
         }
 
         [HttpPut]
-        [Route("internships/{id}/students/{id2}/confirm-exam-attendance")]
-        public ActionResult<InternshipForManagementViewModel> ConfirmInternshipExamAttendanceForStudentAsync(int id, int id2, [FromBody] InternshipForManagementViewModel internshipViewModel)
+        [Route("internships/students/confirm-exam-attendance")]
+        public ActionResult<InternshipForManagementViewModel> ConfirmInternshipExamAttendanceForStudentAsync([FromBody] InternshipForManagementViewModel internshipViewModel)
         {
-            if (!_applicationService.ExistsApplication(id2, id))
+            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
+            if (claim != null)
             {
-                return BadRequest("Nu s-a gasit inregistrarea studentului pentru acest internship");
-            }
+                var userId = claim.Value;
+                try
+                {
+                    var studentId = _studentService.GetStudentIdForUser(userId);
+                    if (!_applicationService.ExistsApplication(studentId, internshipViewModel.Id))
+                    {
+                        return BadRequest("Nu s-a gasit inregistrarea studentului pentru acest internship");
+                    }
 
-            _applicationService.ConfirmInternshipExamAttendanceForStudent(id2, id);
-            internshipViewModel.Status = "EXAMINARE";
-            return Ok(JsonConvert.SerializeObject(internshipViewModel));
+                    _applicationService.ConfirmInternshipExamAttendanceForStudent(studentId, internshipViewModel.Id);
+                    internshipViewModel.Status = "EXAMINARE";
+                    return Ok(JsonConvert.SerializeObject(internshipViewModel));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest("Studentul nu a fost recunoscut");
         }
 
         [HttpPut]
-        [Route("internships/{id}/students/{id2}/confirm-participation")]
-        public ActionResult<InternshipForManagementViewModel> ConfirmInternshipParticipationForStudentAsync(int id, int id2, [FromBody] InternshipForManagementViewModel internshipViewModel)
+        [Route("internships/students/confirm-participation")]
+        public ActionResult<InternshipForManagementViewModel> ConfirmInternshipParticipationForStudentAsync([FromBody] InternshipForManagementViewModel internshipViewModel)
         {
-            if (!_applicationService.ExistsApplication(id2, id))
+            
+            var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
+            if (claim != null)
             {
-                return BadRequest("Nu s-a gasit inregistrarea studentului pentru acest internship");
-            }
+                var userId = claim.Value;
+                try
+                {
+                    var studentId = _studentService.GetStudentIdForUser(userId);
+                    if (!_applicationService.ExistsApplication(studentId, internshipViewModel.Id))
+                    {
+                        return BadRequest("Nu s-a gasit inregistrarea studentului pentru acest internship");
+                    }
 
-            _applicationService.ConfirmInternshipParticipationForStudent(id2, id);
-            internshipViewModel.Status = "ADMIS";
-            return Ok(JsonConvert.SerializeObject(internshipViewModel));
+                    _applicationService.ConfirmInternshipParticipationForStudent(studentId, internshipViewModel.Id);
+                    internshipViewModel.Status = "ADMIS";
+                    return Ok(JsonConvert.SerializeObject(internshipViewModel));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
+            }
+            return BadRequest("Studentul nu a fost recunoscut");
         }
 
         [HttpGet]
         [Route("internships/student")]
-        [Authorize(Roles = "Student")]
         public ActionResult<List<InternshipMainAttributesViewModel>> GetInternshipsForStudent()
         {
             var claim = User.Claims.FirstOrDefault(u => u.Type.Contains("nameidentifier"));
