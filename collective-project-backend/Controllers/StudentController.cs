@@ -236,9 +236,19 @@ namespace API.Controllers
             if (student == null)
                 return BadRequest("Studentul nu exista");
             Stream stream = new MemoryStream(student.Cv);
-            var resultStream = new FileStreamResult(stream, "application/octet-stream");
-            var cv = new CvViewModel() { Id = student.Id, Cv = student.Cv };
-            
+            return File(stream, "application/octet-stream");
+        }
+
+        [HttpGet]
+        [Route("student/cv")]
+        [Authorize(Roles = "Student")]
+        public IActionResult GetUserCV()
+        {
+            var user = User.GetUserId();
+            var student = _studentService.GetStudentByUserId(user);
+            if (student == null)
+                return BadRequest("Studentul nu exista");
+            Stream stream = new MemoryStream(student.Cv);
             return File(stream, "application/octet-stream");
         }
     }
