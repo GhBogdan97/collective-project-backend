@@ -98,5 +98,24 @@ namespace API.Controllers
         {
             return Ok(_ratingService.getStatisticsPiechart(companyId));
         }
+
+        [HttpGet]
+        [Route("statistics/ratings")]
+        public ActionResult<RatingDTO> GetAverageRatingsForCurrentCompany()
+        {
+            var companyUserId = User.GetUserId();
+            var companyId= _companyService.GetCompanyIdForUser(companyUserId);
+            RatingDTO ratingDTO = _ratingService.getAverageRatings(companyId);
+            return Ok(ratingDTO);
+        }
+
+        [HttpGet]
+        [Route("statistics/piechart")]
+        public ActionResult<PiechartDTO> GetStatisticsForCurrentPiechart()
+        {
+            var companyUserId = User.GetUserId();
+            var companyId = _companyService.GetCompanyIdForUser(companyUserId);
+            return Ok(_ratingService.getStatisticsPiechart(companyId));
+        }
     }
 }
