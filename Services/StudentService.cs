@@ -1,8 +1,10 @@
 ﻿using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Services
@@ -164,6 +166,24 @@ namespace Services
                     throw new Exception("Nu exista student pentru acest user");
                 }
                 return student;
+            }
+        }
+
+        public void UploadCV(string studentId, IFormFile cv)
+        {
+            using(var uow = new UnitOfWork())
+            using (var reader = new MemoryStream())
+            {
+                var student = GetStudentByUserId(studentId);
+                
+                cv.CopyTo(reader);
+                var fileBytes = reader.ToArray();
+
+                student.Cv = fileBytes;
+
+                uow.StudentRepository.UpdateEntity(student);
+                uow.Save();
+
             }
         }
     }
