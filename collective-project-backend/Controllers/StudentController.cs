@@ -171,9 +171,11 @@ namespace API.Controllers
 		[Authorize(Roles = "Student")]
 		public IActionResult AddSubscription([FromBody] SubscriptionViewModel subscriptionView)
 		{
+			var userId = User.GetUserId();
+			var student = _studentService.GetStudentByUserId(userId);
 			try
 			{
-				_subscriptionService.AddSubscription(subscriptionView.CompanyId, subscriptionView.StudentId);
+				_subscriptionService.AddSubscription(subscriptionView.CompanyId, student.Id);
 			}
 			catch (Exception e)
 			{
@@ -185,11 +187,12 @@ namespace API.Controllers
 		[HttpPut]
 		[Route("students/subscriptions")]
 		[Authorize(Roles = "Student")]
-		public IActionResult UpdateSubscription([FromBody] SubscriptionViewModel subscriptionView)
-		{
+		public IActionResult UpdateSubscription([FromBody] SubscriptionViewModel subscriptionView) {
+			var userId = User.GetUserId();
+			var student = _studentService.GetStudentByUserId(userId);
 			try
 			{
-				_subscriptionService.DeleteSubscription(subscriptionView.CompanyId, subscriptionView.StudentId);
+				_subscriptionService.DeleteSubscription(subscriptionView.CompanyId, student.Id);
 			}
 			catch (Exception e)
 			{
