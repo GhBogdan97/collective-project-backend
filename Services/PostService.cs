@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
 using Microsoft.AspNetCore.Identity;
@@ -30,18 +31,26 @@ namespace Services
                     throw new Exception("Internship inexistent");
                 }
                 uow.PostRepository.AddEntity(post);
+                uow.Save();
 
-                foreach(var application in internship.Applications)
+                var usersEmails = new List<string>();
+
+                foreach (var application in internship.Applications)
                 {
                     var student = uow.StudentRepository.GetById(application.StudentId);
-
                     var user = _userManager.FindByIdAsync(student.IdUser).Result;
 
-                    var emailSender = new EmailSender();
-                    emailSender.SendEmailAsync(user.Email, "Internship news!", "New information regarding the " + internship.Description + " internship has been posted! Check our application for more information! ;)");
+                    usersEmails.Add(user.Email);
+
                 }
 
-                uow.Save();
+                Task emailSenderTask = new Task(new Action(() =>
+                {
+                    var emailSender = new EmailSender();
+                    emailSender.SendEmailsAsync(usersEmails, "Internship news!", "New information regarding the " + internship.Description + " internship has been posted! Check our application for more information! ;)");
+                }));
+                emailSenderTask.Start();
+
                 return post;
             }
         }
