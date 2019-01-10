@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using API.Mappers;
+using API.ViewModels;
 using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -31,10 +34,12 @@ namespace API.Controllers
 
 		[HttpGet]
 		[Route("companies/subscriptions")]
-		public ActionResult<IList<Company>> GetAllCompaniesWithSubscription() {
+		public ActionResult<IList<CompanyViewModel>> GetAllCompaniesWithSubscription() {
 			var userId = User.GetUserId();
 			var studentId = _studentService.GetStudentIdForUser(userId);
-			return Ok(_companyService.GetCompaniesForStudent(studentId));
+			var allCompanies = _companyService.GetAllCompanies();
+			var viewModels = allCompanies.Select(c => CompanyMapper.ToViewModel(c, studentId)).ToList();
+			return Ok(viewModels);
 		}
 
 		[HttpPost]
