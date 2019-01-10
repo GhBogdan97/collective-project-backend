@@ -57,9 +57,14 @@ namespace Services
                 uow.Save();
 
                 var user = await _userManager.FindByIdAsync(student.IdUser);
-                EmailSender emailSender = new EmailSender();
                 string message = "Ai fost selectat pentru internshipul <<" + internship.Topics + ">> al companiei " + internship.Company.Name + ". In scurt timp vei fi contactat de companie pentru a stabili urmatorii pasi. Felicitari!";
-                await emailSender.SendEmailAsync(user.Email,"Hai la internship!", message);
+
+                var emailSenderTask = new Task(() =>
+                {
+                    EmailSender emailSender = new EmailSender();
+                    emailSender.SendEmailAsync(user.Email, "Hai la internship!", message);
+                });
+                emailSenderTask.Start();
             }
         }
 
@@ -80,11 +85,20 @@ namespace Services
                 UpdateApplication(app);
 
                 var user = await _userManager.FindByIdAsync(student.IdUser);
-                EmailSender emailSender = new EmailSender();
                 string message = "Ai fost acceptat la internshipul <<" + internship.Topics + ">> al companiei " + internship.Company.Name + ". In scurt timp vei fi contactat de companie pentru a stabili urmatorii pasi. Felicitari!";
-                await emailSender.SendEmailAsync(user.Email, "Ai fost admis!", message);
+
+                var emailSenderTask = new Task(() =>
+                {
+
+                    EmailSender emailSender = new EmailSender();
+                    emailSender.SendEmailAsync(user.Email, "Ai fost admis!", message);
+                });
+
+                emailSenderTask.Start();
             }
         }
+
+
 
         public async Task RejectStudentForInternshipAsync(Student student, Internship internship)
         {
@@ -102,9 +116,14 @@ namespace Services
                 UpdateApplication(app);
 
                 var user = await _userManager.FindByIdAsync(student.IdUser);
-                EmailSender emailSender = new EmailSender();
                 string message = "Ne pare rau, dar ai fost respins la internshipul <<" + internship.Topics + ">> al companiei " + internship.Company.Name + ". Multumim pentru participare!";
-                await emailSender.SendEmailAsync(user.Email, "Te mai asteptam", message);
+
+                var emailSenderTask = new Task(() =>
+                {
+                    EmailSender emailSender = new EmailSender();
+                    emailSender.SendEmailAsync(user.Email, "Te mai asteptam", message);
+                });
+                emailSenderTask.Start();
             }
         }
 
