@@ -248,6 +248,8 @@ namespace API.Controllers
             var student = _studentService.GetStudentByUserId(user);
             if (student == null)
                 return BadRequest("Studentul nu exista");
+            if(student.Cv==null)
+                return BadRequest("Cv-ul nu exista");
             Stream stream = new MemoryStream(student.Cv);
             return File(stream, "application/octet-stream");
         }
