@@ -39,5 +39,39 @@ namespace Services
             }
             return Task.CompletedTask;
         }
+
+        public Task SendEmailsAsync(List<string> emails, string subject, string message)
+        {
+            var fromAddress = new MailAddress("emailsender11111@gmail.com", "noreply");
+            const string fromPassword = "Aa123456.";
+
+            foreach (string email in emails)
+            {
+                var toAddress = new MailAddress(email);
+                string body = message;
+
+                //body += message;
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+                using (var mailMessage = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    mailMessage.IsBodyHtml = true;
+                    smtp.Send(mailMessage);
+                }
+            }
+            return Task.CompletedTask;
+
+        }
     }
 }
