@@ -1,6 +1,5 @@
 ﻿using API.Mappers;
 using API.ViewModels;
-using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -425,6 +424,47 @@ namespace API.Controllers
             return Ok(JsonConvert.SerializeObject(internshipViewModel));
         }
 
+        [HttpPost]
+        [Route("internships/{id}/rating")]
+        [Authorize(Roles = "Student")]
+        public ActionResult<AddRatingViewModel> AddRatingToInternship(int id, [FromBody] AddRatingViewModel ratingViewModel)
+        {
+            var userId = User.GetUserId();
+            var student = _studentService.GetStudentByUserId(userId);
+            var studentId = student.Id;
+            var internshipId = id;
+            var addedRating=_internshipService
+                .AddRating(StudentRatingsMapper.ToRatingDbObject(ratingViewModel, studentId, internshipId));
+            return Ok(StudentRatingsMapper.ToAddRatingViewModel(addedRating));
+        }
 
-	}
+        [HttpPost]
+        [Route("internships/{id}/testimonial")]
+        [Authorize(Roles = "Student")]
+        public ActionResult<TestimonialViewModel> AddTestimonialToInternship(int id, [FromBody] AddTestimonialViewModel testimonialViewModel)
+        {
+            var userId = User.GetUserId();
+            var student = _studentService.GetStudentByUserId(userId);
+            var studentId = student.Id;
+            var internshipId = id;
+            var addedTestimonial = _internshipService
+                .AddTestimonial(StudentRatingsMapper.ToRatingWithTestimonialDbObject(testimonialViewModel, studentId, internshipId));
+            return Ok(StudentRatingsMapper.ToTestimonial(addedTestimonial));
+        }
+
+        [HttpGet]
+        [Route("internships/{id}/participant")]
+        [Authorize(Roles = "Student")]
+        public IActionResult CheckIfParticipant(int id)
+        {
+            var userId = User.GetUserId();
+            var student = _studentService.GetStudentByUserId(userId);
+            var studentId = student.Id;
+            var wasParticipant=_internshipService.CheckIfStudentWasParticipant(id, studentId);
+            return Ok(new ParticipantViewModel() { WasParticipant=wasParticipant});
+        }
+
+
+
+    }
 }
