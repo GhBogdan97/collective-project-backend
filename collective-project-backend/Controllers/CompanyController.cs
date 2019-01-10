@@ -13,10 +13,12 @@ namespace API.Controllers
 	{
 		private readonly IEmailSender _emailSender;
 		private readonly CompanyService _companyService;
+		private readonly StudentService _studentService;
 
-        public CompanyController(CompanyService companyService, IEmailSender emailSender)
+		public CompanyController(CompanyService companyService, StudentService studentService,IEmailSender emailSender)
         {
             _companyService = companyService;
+			_studentService = studentService;
 			_emailSender = emailSender;
         }
 
@@ -27,7 +29,15 @@ namespace API.Controllers
             return Ok(_companyService.GetAllCompanies());
         }
 
-        [HttpPost]
+		[HttpGet]
+		[Route("companies/subscriptions")]
+		public ActionResult<IList<Company>> GetAllCompaniesWithSubscription() {
+			var userId = User.GetUserId();
+			var studentId = _studentService.GetStudentIdForUser(userId);
+			return Ok(_companyService.GetCompaniesForStudent(studentId));
+		}
+
+		[HttpPost]
         [Route("companies")]
         public IActionResult UpdateCompany(Company company)
         {

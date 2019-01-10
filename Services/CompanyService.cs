@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using DatabaseAccess.Models;
 using DatabaseAccess.UOW;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services
 {
@@ -13,7 +14,23 @@ namespace Services
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
-				return uow.CompanyRepository.GetAll();
+				return uow.CompanyRepository.getDbSet().Include(c => c.Internships).Include(c => c.Subscriptions).ToList();
+				//return uow.CompanyRepository.GetAll().Include(company => company.InternShips);
+			}
+		}
+
+		public IList<object> GetCompaniesForStudent(int studentId) {
+			using (UnitOfWork uow = new UnitOfWork()) {
+				return uow.CompanyRepository
+					.getDbSet()
+					.Include(c => c.Internships)
+					.Include(c => c.Subscriptions)
+					.Select(c => (object)new {
+						Comp = c,
+						Subscribed = c.Subscriptions.Any(s => s.StudentId == studentId)
+					})
+					.ToList();
+
 			}
 		}
 
