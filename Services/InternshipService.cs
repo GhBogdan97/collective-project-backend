@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Services
 {
@@ -19,7 +20,7 @@ namespace Services
             _userManager = userManager;
         }
 
-        public void UpdateInternship(Internship internship, int id)
+        public async void UpdateInternship(Internship internship, int id)
         {
             using (UnitOfWork uow = new UnitOfWork())
             {
@@ -53,6 +54,9 @@ namespace Services
                 internshipDb.Name = internship.Name ?? internshipDb.Name;
                 internshipDb.OccupiedPlaces = internship.OccupiedPlaces;
                 uow.InternshipRepository.UpdateEntity(internshipDb);
+                uow.Save();
+
+                var usersEmails = new List<string>();
 
                 foreach (var application in internshipDb.Applications)
                 {
@@ -60,11 +64,17 @@ namespace Services
 
                     var user = _userManager.FindByIdAsync(student.IdUser).Result;
 
-                    var emailSender = new EmailSender();
-                    emailSender.SendEmailAsync(user.Email, "Internship update ", "Internship " + internship.Description + " was updated! Check it out on by clicking the following link: http://localhost:8080/");
-
+                    usersEmails.Add(user.Email);
                 }
-                uow.Save();
+
+                Task emailSenderTask = new Task(new Action(() =>
+                {
+                    string subject = "Internship update ";
+                    string message = "Internship " + internship.Description + " was updated! Check it out on by clicking the following link: http://localhost:8080/";
+                    var emailSender = new EmailSender();
+                    emailSender.SendEmailsAsync(usersEmails, subject, message);
+                }));
+                emailSenderTask.Start();
             }
         }
 
@@ -91,7 +101,7 @@ namespace Services
 
         public string GetStatusForStudentInternship(Internship internship, int studentId)
         {
-            using(UnitOfWork uow = new UnitOfWork())
+            using (UnitOfWork uow = new UnitOfWork())
             {
                 var applicationDb = uow.ApplicationRepository.getDbSet().Where(a => a.InternshipId == internship.Id && a.StudentId == studentId).FirstOrDefault();
                 return applicationDb.Status.ToString();
@@ -111,7 +121,7 @@ namespace Services
                     throw new Exception($"Studentul cu id-ul {id} nu exista");
 
                 List<Internship> internships = new List<Internship>();
-                foreach(var application in student.Applications)
+                foreach (var application in student.Applications)
                 {
                     var internship = uow.InternshipRepository.GetById(application.InternshipId);
                     internships.Add(internship);
@@ -135,15 +145,26 @@ namespace Services
                     throw new Exception($"Compania cu id-ul {internship.Id} nu exista");
                 }
                 uow.InternshipRepository.AddEntity(internship);
+                uow.Save();
 
-                foreach(var subscription in company.Subscriptions)
+                var usersEmails = new List<string>();
+
+                foreach (var subscription in company.Subscriptions)
                 {
                     var student = uow.StudentRepository.GetById(subscription.StudentId);
                     var user = _userManager.FindByIdAsync(student.IdUser).Result;
-                    var emailSender = new EmailSender();
-                    emailSender.SendEmailAsync(user.Email, "New internship!", "A new internship has been added for " + company.Name + "! Check more about it here: http://localhost:8080/");
+                    usersEmails.Add(user.Email);
                 }
-                uow.Save();
+
+                Task emailSenderTask = new Task(new Action(() =>
+                {
+                    var emailSender = new EmailSender();
+                    string subject = "New internship!";
+                    string message = "A new internship has been added for " + company.Name + "! Check more about it here: http://localhost:8080/";
+                    emailSender.SendEmailsAsync(usersEmails, subject, message);
+                }));
+                emailSenderTask.Start();
+
                 return internship;
             }
         }
@@ -154,7 +175,7 @@ namespace Services
             {
                 var internship = uow.InternshipRepository.GetById(id);
 
-                if(internship == null)
+                if (internship == null)
                 {
                     throw new Exception("Internship-ul nu exista!");
                 }
@@ -167,7 +188,7 @@ namespace Services
         {
             using (var uow = new UnitOfWork())
             {
-                var ratings = uow.RatingRepository.getDbSet().Where(t=>t.InternshipId==id).ToList();
+                var ratings = uow.RatingRepository.getDbSet().Where(t => t.InternshipId == id).ToList();
 
                 if (ratings == null)
                 {
@@ -196,7 +217,7 @@ namespace Services
             using (UnitOfWork uow = new UnitOfWork())
             {
                 return uow.RatingRepository.getDbSet()
-                    .Include(r=>r.Student)
+                    .Include(r => r.Student)
                     .Where(r => r.InternshipId == id)
                     .ToList();
             }
@@ -210,18 +231,18 @@ namespace Services
             }
         }
 
-		public IList<Internship> GetAllInternships()
-		{
-			using (UnitOfWork uow = new UnitOfWork())
-			{
-				return uow.InternshipRepository.GetAll();
-			}
-		}
+        public IList<Internship> GetAllInternships()
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                return uow.InternshipRepository.GetAll();
+            }
+        }
 
-		public Internship GetInternshipById(int id)
-		{
-			using (UnitOfWork uow = new UnitOfWork())
-			{
+        public Internship GetInternshipById(int id)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
                 return uow.InternshipRepository.getDbSet()
                     .Where(i => i.Id == id)
                     .Include(i => i.Company)

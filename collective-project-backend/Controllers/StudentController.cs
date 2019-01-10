@@ -3,6 +3,7 @@ using API.ViewModels;
 using collective_project_backend.ViewModels.AccountViewModels;
 using DatabaseAccess.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -14,103 +15,103 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-	[ApiController]
-	public class StudentController : ControllerBase
-	{
-		private readonly StudentService _studentService;
-		private readonly ApplicationService _applicationService;
-		private readonly InternshipService _internshipService;
-		private readonly SubscriptionService _subscriptionService;
-		private readonly RatingService _ratingService;
+    [ApiController]
+    public class StudentController : ControllerBase
+    {
+        private readonly StudentService _studentService;
+        private readonly ApplicationService _applicationService;
+        private readonly InternshipService _internshipService;
+        private readonly SubscriptionService _subscriptionService;
+        private readonly RatingService _ratingService;
 
-		private readonly UserManager<ApplicationUser> _userManager;
-		private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-		public StudentController(StudentService studentService, ApplicationService applicationService,
-			InternshipService internshipService, SubscriptionService subscriptionService,
-			RatingService ratingService,
-			UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
-		{
-			_studentService = studentService;
-			_applicationService = applicationService;
-			_internshipService = internshipService;
-			_subscriptionService = subscriptionService;
-			_ratingService = ratingService;
-			_userManager = userManager;
-			_roleManager = roleManager;
-		}
+        public StudentController(StudentService studentService, ApplicationService applicationService,
+            InternshipService internshipService, SubscriptionService subscriptionService,
+            RatingService ratingService,
+            UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            _studentService = studentService;
+            _applicationService = applicationService;
+            _internshipService = internshipService;
+            _subscriptionService = subscriptionService;
+            _ratingService = ratingService;
+            _userManager = userManager;
+            _roleManager = roleManager;
+        }
 
-		[HttpGet]
+        [HttpGet]
         [Route("students")]
         [Authorize(Roles = "Company")]
-		public ActionResult<List<StudentViewModel>> GetAllStudents()
-		{
-			return Ok(StudentMapper.GetStudentsViewFrom(_studentService.GetAllStudents()));
-		}
+        public ActionResult<List<StudentViewModel>> GetAllStudents()
+        {
+            return Ok(StudentMapper.GetStudentsViewFrom(_studentService.GetAllStudents()));
+        }
 
-		[HttpGet]
-		[Route("students/internship/{internshipId}")]
-		[Authorize(Roles = "Company")]
-		public ActionResult<List<StudentViewModel>> GetStudentsByInternshipId(int internshipId)
-		{
-			var studentsByInternship = _studentService.GetStudentsByInternshipId(internshipId);
-			return Ok(StudentMapper.GetStudentsViewFrom(studentsByInternship));
-		}
+        [HttpGet]
+        [Route("students/internship/{internshipId}")]
+        [Authorize(Roles = "Company")]
+        public ActionResult<List<StudentViewModel>> GetStudentsByInternshipId(int internshipId)
+        {
+            var studentsByInternship = _studentService.GetStudentsByInternshipId(internshipId);
+            return Ok(StudentMapper.GetStudentsViewFrom(studentsByInternship));
+        }
 
-		[HttpGet]
-		[Route("students/company/{companyId}")]
-		[Authorize(Roles = "Company")]
-		public ActionResult<List<StudentViewModel>> GetStudentsByCompanyId(int companyId)
-		{
-			var studentsByCompany = _studentService.GetStudentsByInternshipId(companyId);
-			return Ok(StudentMapper.GetStudentsViewFrom(studentsByCompany));
-		}
+        [HttpGet]
+        [Route("students/company/{companyId}")]
+        [Authorize(Roles = "Company")]
+        public ActionResult<List<StudentViewModel>> GetStudentsByCompanyId(int companyId)
+        {
+            var studentsByCompany = _studentService.GetStudentsByInternshipId(companyId);
+            return Ok(StudentMapper.GetStudentsViewFrom(studentsByCompany));
+        }
 
-		[HttpPost]
+        [HttpPost]
         [Route("students/register")]
-		[Authorize(Roles = "Student")]
-		public async Task<IActionResult> RegisterStudentAsync([FromBody] StudentViewModel studentView)
-		{
-			var student = StudentMapper.ToActualObject(studentView);
-			RegisterViewModel registration = new RegisterViewModel
-			{
-				Email = studentView.Email,
-				Password = studentView.Password,
-				ConfirmPassword = studentView.ConfirmPassword
-			};
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> RegisterStudentAsync([FromBody] StudentViewModel studentView)
+        {
+            var student = StudentMapper.ToActualObject(studentView);
+            RegisterViewModel registration = new RegisterViewModel
+            {
+                Email = studentView.Email,
+                Password = studentView.Password,
+                ConfirmPassword = studentView.ConfirmPassword
+            };
 
-			IdentityResult result = await _userManager.CreateAsync(new ApplicationUser { Email = registration.Email, UserName = registration.Email }, registration.Password);
-			if (result.Succeeded)
-			{
-				var studentUserManager = await _userManager.FindByEmailAsync(registration.Email);
-				var roleStudent = await _roleManager.FindByNameAsync("Student");
-				await _userManager.AddToRoleAsync(studentUserManager, roleStudent.Name);
-				student.IdUser = studentUserManager.Id;
-				_studentService.AddStudent(student);
-				return Ok();
-			}
-			return BadRequest();
-		}
+            IdentityResult result = await _userManager.CreateAsync(new ApplicationUser { Email = registration.Email, UserName = registration.Email }, registration.Password);
+            if (result.Succeeded)
+            {
+                var studentUserManager = await _userManager.FindByEmailAsync(registration.Email);
+                var roleStudent = await _roleManager.FindByNameAsync("Student");
+                await _userManager.AddToRoleAsync(studentUserManager, roleStudent.Name);
+                student.IdUser = studentUserManager.Id;
+                _studentService.AddStudent(student);
+                return Ok();
+            }
+            return BadRequest();
+        }
 
-		[HttpPut]
+        [HttpPut]
         [Route("students")]
-		[Authorize(Roles = "Student")]
-		public IActionResult UpdateStudent([FromBody] StudentViewModel studentView)
-		{
-			try
-			{
+        [Authorize(Roles = "Student")]
+        public IActionResult UpdateStudent([FromBody] StudentViewModel studentView)
+        {
+            try
+            {
                 var idUser = User.GetUserId();
                 var studentId = _studentService.GetStudentIdForUser(idUser);
                 var student = StudentMapper.ToActualObject(studentView);
                 student.Id = studentId;
-				_studentService.UpdateStudent(student);
-			}
-			catch (Exception e)
-			{
-				return BadRequest(e.Message);
-			}
-			return Ok();
-		}
+                _studentService.UpdateStudent(student);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            return Ok();
+        }
 
         [HttpGet]
         [Route("student")]
@@ -131,90 +132,90 @@ namespace API.Controllers
         }
 
 
-		[HttpPost]
-		[Route("students/applications")]
-		[Authorize(Roles = "Student")]
-		public IActionResult AddApplication([FromBody] ApplicationViewModel applicationView)
-		{
-			try
-			{
+        [HttpPost]
+        [Route("students/applications")]
+        [Authorize(Roles = "Student")]
+        public IActionResult AddApplication([FromBody] ApplicationViewModel applicationView)
+        {
+            try
+            {
                 string id = User.GetUserId();
-				var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
-				_applicationService.AddApplication(application);
-			}
-			catch (Exception e)
-			{
-				return BadRequest(e);
-			}
-			return Ok();
-		}
+                var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
+                _applicationService.AddApplication(application);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+            return Ok();
+        }
 
-		[HttpPut]
-		[Route("students/applications")]
-		[Authorize(Roles = "Student")]
-		public IActionResult UpdateApplication([FromBody] ApplicationViewModel applicationView)
-		{
-			try
-			{
-				var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
-				_applicationService.RejectOtherApplications(application);
-			}
-			catch (Exception e)
-			{
-				return BadRequest(e);
-			}
-			return Ok();
-		}
+        [HttpPut]
+        [Route("students/applications")]
+        [Authorize(Roles = "Student")]
+        public IActionResult UpdateApplication([FromBody] ApplicationViewModel applicationView)
+        {
+            try
+            {
+                var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
+                _applicationService.RejectOtherApplications(application);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+            return Ok();
+        }
 
-		[HttpPost]
-		[Route("students/subscriptions")]
-		[Authorize(Roles = "Student")]
-		public IActionResult AddSubscription([FromBody] SubscriptionViewModel subscriptionView)
-		{
-			var userId = User.GetUserId();
-			var student = _studentService.GetStudentByUserId(userId);
-			try
-			{
-				_subscriptionService.AddSubscription(subscriptionView.CompanyId, student.Id);
-			}
-			catch (Exception e)
-			{
-				return BadRequest(e);
-			}
-			return Ok();
-		}
+        [HttpPost]
+        [Route("students/subscriptions")]
+        [Authorize(Roles = "Student")]
+        public IActionResult AddSubscription([FromBody] SubscriptionViewModel subscriptionView)
+        {
+            var userId = User.GetUserId();
+            var student = _studentService.GetStudentByUserId(userId);
+            try
+            {
+                _subscriptionService.AddSubscription(subscriptionView.CompanyId, student.Id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+            return Ok();
+        }
 
-		[HttpPut]
-		[Route("students/subscriptions")]
-		[Authorize(Roles = "Student")]
-		public IActionResult UpdateSubscription([FromBody] SubscriptionViewModel subscriptionView) {
-			var userId = User.GetUserId();
-			var student = _studentService.GetStudentByUserId(userId);
-			try
-			{
-				_subscriptionService.DeleteSubscription(subscriptionView.CompanyId, student.Id);
-			}
-			catch (Exception e)
-			{
-				return BadRequest(e);
-			}
-			return Ok();
-		}
+        [HttpPut]
+        [Route("students/subscriptions")]
+        [Authorize(Roles = "Student")]
+        public IActionResult UpdateSubscription([FromBody] SubscriptionViewModel subscriptionView) {
+            var userId = User.GetUserId();
+            var student = _studentService.GetStudentByUserId(userId);
+            try
+            {
+                _subscriptionService.DeleteSubscription(subscriptionView.CompanyId, student.Id);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+            return Ok();
+        }
 
-		[HttpGet]
-		[Route("students/applications/{studentId}/{internshipId}")]
-		[Authorize(Roles = "Company")]
-		public ActionResult<bool> ExistsApplication(int studentId, int internshipId)
-		{
-			return Ok(_applicationService.ExistsApplication(studentId, internshipId));
-		}
+        [HttpGet]
+        [Route("students/applications/{studentId}/{internshipId}")]
+        [Authorize(Roles = "Company")]
+        public ActionResult<bool> ExistsApplication(int studentId, int internshipId)
+        {
+            return Ok(_applicationService.ExistsApplication(studentId, internshipId));
+        }
 
-		[HttpGet]
-		[Route("students/ratings/{studentId}/{internshipId}")]
-		[Authorize(Roles = "Company")]
-		public ActionResult<bool> ExistsRating(int studentId, int internshipId)
-		{
-			return Ok(_ratingService.ExistsRating(studentId, internshipId));
+        [HttpGet]
+        [Route("students/ratings/{studentId}/{internshipId}")]
+        [Authorize(Roles = "Company")]
+        public ActionResult<bool> ExistsRating(int studentId, int internshipId)
+        {
+            return Ok(_ratingService.ExistsRating(studentId, internshipId));
         }
 
         [HttpGet]
@@ -252,6 +253,26 @@ namespace API.Controllers
                 return BadRequest("Cv-ul nu exista");
             Stream stream = new MemoryStream(student.Cv);
             return File(stream, "application/octet-stream");
+        }
+
+
+        [HttpPost]
+        [Route("students/cv")]
+        [Authorize(Roles = "Student")]
+        public IActionResult UploadCV([FromForm] UploadCvViewModel fileViewModel)
+        {
+            var studentId = User.GetUserId();
+
+            try
+            {
+                _studentService.UploadCV(studentId, fileViewModel.Cv);
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
