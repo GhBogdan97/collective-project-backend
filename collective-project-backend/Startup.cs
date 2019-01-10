@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Services;
 using System.Threading.Tasks;
 using Swashbuckle.AspNetCore.Swagger;
+using Newtonsoft.Json;
 
 namespace collective_project_backend
 {
@@ -66,7 +67,9 @@ namespace collective_project_backend
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddMvc();
+			services.AddMvc().AddJsonOptions(options => {
+				options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+			});
 			services.AddTransient<ApplicationService>();
 			services.AddTransient<CompanyService>();
 			services.AddTransient<InternshipService>();
