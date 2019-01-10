@@ -247,6 +247,76 @@ namespace Services
                     .Where(i => i.Id == id)
                     .Include(i => i.Company)
                     .FirstOrDefault();
+			}
+		}
+
+        public Rating AddRating(Rating rating)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var existingRating = uow.RatingRepository.getDbSet()
+                    .Where(r => r.StudentId == rating.StudentId && r.InternshipId == rating.InternshipId)
+                    .FirstOrDefault();
+
+                if(existingRating==null)
+                {
+                    rating.Date = DateTime.Now;
+                    existingRating = rating;
+                    uow.RatingRepository.AddEntity(rating);
+                }
+                else
+                {
+                    existingRating.Date = DateTime.Now;
+                    existingRating.RatingCompany = rating.RatingCompany;
+                    existingRating.RatingInternship = rating.RatingInternship;
+                    existingRating.RatingInternship = rating.RatingMentors;
+                    uow.RatingRepository.UpdateEntity(existingRating);
+                }
+                uow.Save();
+                return existingRating;
+
+            }
+        }
+
+        public Rating AddTestimonial(Rating rating)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var existingRating = uow.RatingRepository.getDbSet()
+                    .Where(r => r.StudentId == rating.StudentId && r.InternshipId == rating.InternshipId)
+                    .Include(r=>r.Student)
+                    .FirstOrDefault();
+
+                if (existingRating == null)
+                {
+                    rating.Date = DateTime.Now;
+                    existingRating = rating;
+                    uow.RatingRepository.AddEntity(rating);
+                }
+                else
+                {
+                    existingRating.Date = DateTime.Now;
+                    existingRating.Testimonial = rating.Testimonial;
+                    uow.RatingRepository.UpdateEntity(existingRating);
+                }
+                uow.Save();
+                return existingRating;
+            }
+        }
+
+        public bool CheckIfStudentWasParticipant(int internshipId, int studentId)
+        {
+            using (UnitOfWork uow = new UnitOfWork())
+            {
+                var internship = uow.InternshipRepository.getDbSet()
+                    .Where(i => i.Id == internshipId)
+                    .Include(i => i.Applications)
+                    .FirstOrDefault();
+
+                if (internship == null) return false;
+                var application = internship.Applications.Where(a => a.StudentId == studentId).FirstOrDefault();
+                if (application == null) return false;
+                return internship.End <= DateTime.Now && application.Status == DatabaseAccess.Enums.ApplicationStatus.ADMIS;
             }
         }
     }

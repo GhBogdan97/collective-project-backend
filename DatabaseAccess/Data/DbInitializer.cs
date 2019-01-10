@@ -224,7 +224,7 @@ namespace DatabaseAccess.Data
             {
                 InternshipId = internshipAccesa1.Id,
                 StudentId = ionescu.Id,
-                Status = Enums.ApplicationStatus.EXAMINARE
+                Status = Enums.ApplicationStatus.ADMIS
             };
             context.Applications.Add(application3);
             context.SaveChanges();
