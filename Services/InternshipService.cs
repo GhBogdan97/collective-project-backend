@@ -269,7 +269,7 @@ namespace Services
                     existingRating.Date = DateTime.Now;
                     existingRating.RatingCompany = rating.RatingCompany;
                     existingRating.RatingInternship = rating.RatingInternship;
-                    existingRating.RatingInternship = rating.RatingMentors;
+                    existingRating.RatingMentors = rating.RatingMentors;
                     uow.RatingRepository.UpdateEntity(existingRating);
                 }
                 uow.Save();
