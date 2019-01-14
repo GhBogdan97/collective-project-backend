@@ -52,5 +52,18 @@ namespace API.Mappers
 				Year = studentViewModel.Year
 			};
 		}
-	}
+
+        public static Student ToActualObjectNoId(RegisterStudentViewModel studentViewModel)
+        {
+            return new Student()
+            {
+                Firstname = studentViewModel.Firstname,
+                Lastname = studentViewModel.Lastname,
+                University = studentViewModel.University,
+                Specialization = studentViewModel.Specialization,
+                College = studentViewModel.College,
+                Year = studentViewModel.Year,
+            };
+        }
+    }
 }

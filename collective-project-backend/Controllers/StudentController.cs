@@ -69,10 +69,9 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("students/register")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> RegisterStudentAsync([FromBody] StudentViewModel studentView)
+        public async Task<IActionResult> RegisterStudentAsync([FromForm] RegisterStudentViewModel studentView)
         {
-            var student = StudentMapper.ToActualObject(studentView);
+            var student = StudentMapper.ToActualObjectNoId(studentView);
             RegisterViewModel registration = new RegisterViewModel
             {
                 Email = studentView.Email,
@@ -88,6 +87,12 @@ namespace API.Controllers
                 await _userManager.AddToRoleAsync(studentUserManager, roleStudent.Name);
                 student.IdUser = studentUserManager.Id;
                 _studentService.AddStudent(student);
+
+                if(studentView.Cv!=null)
+                {
+                    _studentService.UploadCV(student.IdUser, studentView.Cv);
+                }
+
                 return Ok();
             }
             return BadRequest();
