@@ -53,7 +53,7 @@ namespace API.Mappers
 			};
 		}
 
-        public static Student ToActualObjectNoId(StudentViewModel studentViewModel)
+        public static Student ToActualObjectNoId(RegisterStudentViewModel studentViewModel)
         {
             return new Student()
             {

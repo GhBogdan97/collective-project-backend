@@ -69,7 +69,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("students/register")]
-        public async Task<IActionResult> RegisterStudentAsync([FromForm] StudentViewModel studentView)
+        public async Task<IActionResult> RegisterStudentAsync([FromForm] RegisterStudentViewModel studentView)
         {
             var student = StudentMapper.ToActualObjectNoId(studentView);
             RegisterViewModel registration = new RegisterViewModel
