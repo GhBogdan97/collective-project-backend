@@ -30,7 +30,7 @@ namespace DatabaseAccess.Data
         {
             await userManager.CreateAsync(new ApplicationUser { Email = "bogdan_2101@yahoo.com", UserName = "bogdan_2101@yahoo.com" }, "Password123.");
             await userManager.CreateAsync(new ApplicationUser { Email = "simonaburlacu01@gmail.com", UserName = "simonaburlacu01@gmail.com" }, "Password123.");
-            await userManager.CreateAsync(new ApplicationUser { Email = "testStudent1@email.com", UserName = "testStudent1@email.com" }, "Password123.");
+            await userManager.CreateAsync(new ApplicationUser { Email = "alex.cornea19@email.com", UserName = "alex.cornea19@email.com" }, "Password123.");
             await userManager.CreateAsync(new ApplicationUser { Email = "testCompanyUser1@email.com", UserName = "testCompanyUser1@email.com" }, "Password123.");
             await userManager.CreateAsync(new ApplicationUser { Email = "testCompanyUser2@email.com", UserName = "testCompanyUser2@email.com" }, "Password123.");
 
@@ -38,7 +38,7 @@ namespace DatabaseAccess.Data
             await roleManager.CreateAsync(new IdentityRole { Name = "Company" });
 
             var student1 = await userManager.FindByEmailAsync("simonaburlacu01@gmail.com");
-            var student2 = await userManager.FindByEmailAsync("testStudent1@email.com");
+            var student2 = await userManager.FindByEmailAsync("alex.cornea19@email.com");
             var student3 = await userManager.FindByEmailAsync("bogdan_2101@yahoo.com");
             var company1 = await userManager.FindByEmailAsync("testCompanyUser1@email.com");
             var company2 = await userManager.FindByEmailAsync("testCompanyUser2@email.com");
@@ -56,13 +56,9 @@ namespace DatabaseAccess.Data
 
             #region Students
             string cvFilePath1 = "/DatabaseAccess/Resources/CVs/cv.pdf";
-            //FileStream fStream = 
 
-            //byte[] contents = File.ReadAllBytes(parentDirectory + cvFilePath1);
+            byte[] contents = File.ReadAllBytes(parentDirectory + cvFilePath1);
 
-            //fStream.Read(contents, 0, (int)fStream.Length);
-
-            //fStream.Close();
             List<Student> students = new List<Student> {
                 new Student()
                 {
@@ -71,19 +67,19 @@ namespace DatabaseAccess.Data
                     University = "UBB",
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
-                    Cv = null,
+                    Cv = contents,
                     Year = 3,
                     IdUser = student1.Id
                 },
                 new Student()
                 {
-                    Firstname = "Ionescu",
-                    Lastname = "Agarbiceanu",
+                    Firstname = "Alex",
+                    Lastname = "Cornea",
                     University = "UBB",
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
-                    Year = 2,
-                    Cv = null,
+                    Year = 3,
+                    Cv = contents,
                     IdUser = student2.Id
                 },
                 new Student()
@@ -94,7 +90,7 @@ namespace DatabaseAccess.Data
                     College = "Facultatea de Matematica-Informatica",
                     Specialization = "Informatica-Romana",
                     Year = 3,
-                    Cv=null,
+                    Cv=contents,
                     IdUser = student3.Id
                 }
             };
@@ -198,14 +194,14 @@ namespace DatabaseAccess.Data
             #endregion
 
             var simona = context.Students.Where(s => s.Firstname == "Simona").FirstOrDefault();
-            var ionescu= context.Students.Where(s => s.Firstname == "Ionescu").FirstOrDefault();
+            var alex= context.Students.Where(s => s.Firstname == "Alex").FirstOrDefault();
             var bogdan = context.Students.Where(s => s.Firstname == "Bogdan").FirstOrDefault();
 
             #region Applications
             var application1 = new Application()
             {
                 InternshipId=internshipAccesa1.Id,
-                StudentId=simona.Id,
+                StudentId=alex.Id,
                 Status=Enums.ApplicationStatus.APLICAT
             };
             context.Applications.Add(application1);
@@ -214,7 +210,7 @@ namespace DatabaseAccess.Data
             var application2 = new Application()
             {
                 InternshipId = internshipAccesa2.Id,
-                StudentId = simona.Id,
+                StudentId = alex.Id,
                 Status = Enums.ApplicationStatus.CONTACTAT
             };
             context.Applications.Add(application2);
@@ -223,7 +219,7 @@ namespace DatabaseAccess.Data
             var application3 = new Application()
             {
                 InternshipId = internshipAccesa1.Id,
-                StudentId = ionescu.Id,
+                StudentId = simona.Id,
                 Status = Enums.ApplicationStatus.ADMIS
             };
             context.Applications.Add(application3);
@@ -233,9 +229,27 @@ namespace DatabaseAccess.Data
             {
                 InternshipId = internshipAccesa1.Id,
                 StudentId = bogdan.Id,
-                Status = Enums.ApplicationStatus.CONTACTAT
+                Status = Enums.ApplicationStatus.APROBAT
             };
             context.Applications.Add(application4);
+            context.SaveChanges();
+
+            var application5 = new Application()
+            {
+                InternshipId = internshipAccesa3.Id,
+                StudentId = alex.Id,
+                Status = Enums.ApplicationStatus.APROBAT
+            };
+            context.Applications.Add(application5);
+            context.SaveChanges();
+
+            var application6 = new Application()
+            {
+                InternshipId = internshipAccesa4.Id,
+                StudentId = alex.Id,
+                Status = Enums.ApplicationStatus.RESPINS
+            };
+            context.Applications.Add(application6);
             context.SaveChanges();
 
             string imageFilePath1 = "/DatabaseAccess/Resources/internship2.jpg";
@@ -290,7 +304,7 @@ namespace DatabaseAccess.Data
                     RatingInternship = 3,
                     RatingMentors = 3,
                     Date = new DateTime(2018,07,23),
-                    Testimonial = "Meh."
+                    Testimonial = "Am invatat foarte multe in cadrul acestui internship.Recomand!"
                 },
             };
 

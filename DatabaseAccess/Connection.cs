@@ -6,7 +6,7 @@
         {
             get
             {
-                return "Data Source=tcp:api20190118060635dbserver.database.windows.net,1433;Initial Catalog=API20190118060635_db;User Id=bogdan.gheorghe@api20190118060635dbserver;Password=Gh.Bogd@n97";
+                return "Data Source=localhost\\SQLEXPRESS01;Initial Catalog=Internship1;Integrated Security=True;";
             }
         }
     }
