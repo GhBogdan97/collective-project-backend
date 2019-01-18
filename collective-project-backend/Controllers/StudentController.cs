@@ -137,22 +137,42 @@ namespace API.Controllers
         }
 
 
+        //[HttpPost]
+        //[Route("students/applications")]
+        //[Authorize(Roles = "Student")]
+        //public IActionResult AddApplication([FromBody] ApplicationViewModel applicationView)
+        //{
+        //    try
+        //    {
+        //        string id = User.GetUserId();
+        //        var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
+        //        _applicationService.AddApplication(application);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest(e);
+        //    }
+        //    return Ok();
+        //}
+
         [HttpPost]
         [Route("students/applications")]
         [Authorize(Roles = "Student")]
-        public IActionResult AddApplication([FromBody] ApplicationViewModel applicationView)
+        public ActionResult<ApplicationExistedViewModel> AddApplication([FromBody] AddApplicationViewModel applicationView)
         {
             try
             {
                 string id = User.GetUserId();
-                var application = ApplicationMapper.ToActualObject(applicationView, _internshipService);
-                _applicationService.AddApplication(application);
+                var studentId = _studentService.GetStudentByUserId(id).Id;
+                var application = ApplicationMapper.ToActualObjectWithStudentId(applicationView, studentId);
+                var addApplicationResponse=_applicationService.AddApplication(application);
+                var applicationExisted = new ApplicationExistedViewModel() { ApplicationExisted = addApplicationResponse };
+                return Ok(applicationExisted);
             }
             catch (Exception e)
             {
                 return BadRequest(e);
             }
-            return Ok();
         }
 
         [HttpPut]
