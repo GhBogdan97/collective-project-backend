@@ -1,6 +1,8 @@
 ﻿using API.ViewModels;
+using DatabaseAccess.Enums;
 using DatabaseAccess.Models;
 using Services;
+using System;
 
 namespace API.Mappers
 {
@@ -26,6 +28,19 @@ namespace API.Mappers
 				Status = applicationViewModel.Status
 			};
 		}
+
+        public static Application ToActualObjectWithStudentId(AddApplicationViewModel applicationViewModel, int studentId)
+        {
+            ApplicationStatus status = ApplicationStatus.APLICAT;
+            Enum.TryParse(applicationViewModel.Status, out status);
+
+            return new Application()
+            {
+                InternshipId = applicationViewModel.InternshipId,
+                StudentId = studentId,
+                Status =  status
+            };
+        }
 
         public static ApplicationForManagementViewModel ToApplicationManagement(Application application)
         {

@@ -184,7 +184,7 @@ namespace Services
             }
         }
 
-        public void AddApplication(Application application)
+        public bool AddApplication(Application application)
 		{
 			using (UnitOfWork uow = new UnitOfWork())
 			{
@@ -196,8 +196,24 @@ namespace Services
 				{
 					throw new Exception("There is no internship with id = " + application.InternshipId);
 				}
-				uow.ApplicationRepository.AddEntity(application);
+
+                var existingApplication = uow.ApplicationRepository.getDbSet()
+                    .Where(a => a.InternshipId == application.InternshipId && a.StudentId == application.StudentId)
+                    .FirstOrDefault();
+
+                if (existingApplication != null)
+                    return false;
+
+                var accepted = uow.ApplicationRepository.getDbSet()
+                   .Where(a => a.Status == DatabaseAccess.Enums.ApplicationStatus.ADMIS && a.StudentId == application.StudentId)
+                   .FirstOrDefault();
+
+                if (accepted != null)
+                    return false;
+
+                uow.ApplicationRepository.AddEntity(application);
 				uow.Save();
+                return true;
 			}
 		}
 
