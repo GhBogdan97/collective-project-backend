@@ -204,7 +204,14 @@ namespace Services
                 if (existingApplication != null)
                     return false;
 
-				uow.ApplicationRepository.AddEntity(application);
+                var accepted = uow.ApplicationRepository.getDbSet()
+                   .Where(a => a.Status == DatabaseAccess.Enums.ApplicationStatus.ADMIS && a.StudentId == application.StudentId)
+                   .FirstOrDefault();
+
+                if (accepted != null)
+                    return false;
+
+                uow.ApplicationRepository.AddEntity(application);
 				uow.Save();
                 return true;
 			}
