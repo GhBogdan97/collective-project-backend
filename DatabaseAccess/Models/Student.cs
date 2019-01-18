@@ -26,7 +26,6 @@ namespace DatabaseAccess.Models
         public StudentStatus Status { get; set; }
         
         public List<Subscription> Subscriptions { get; set; }
-
         public List<Application> Applications { get; set; }
 
         public List<Rating> Ratings { get; set; }

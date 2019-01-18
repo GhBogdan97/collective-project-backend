@@ -25,8 +25,6 @@ namespace DatabaseAccess.Data.Migrations
 
                     b.Property<int>("StudentId");
 
-                    b.Property<bool>("Accepted");
-
                     b.Property<int>("Status");
 
                     b.HasKey("InternshipId", "StudentId");
@@ -124,6 +122,8 @@ namespace DatabaseAccess.Data.Migrations
 
                     b.Property<DateTime>("End");
 
+                    b.Property<string>("Name");
+
                     b.Property<int>("Places");
 
                     b.Property<DateTime>("Start");
@@ -152,6 +152,8 @@ namespace DatabaseAccess.Data.Migrations
                     b.Property<int>("InternshipId");
 
                     b.Property<bool>("Last");
+
+                    b.Property<string>("Text");
 
                     b.Property<string>("Title")
                         .IsRequired();

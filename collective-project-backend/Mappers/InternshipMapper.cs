@@ -19,7 +19,8 @@ namespace API.Mappers
                 Topics = internship.Topics,
                 Weeks = internship.Weeks,
                 End = internship.End.Date.ToShortDateString(),
-                Start = internship.Start.Date.ToShortDateString()
+                Start = internship.Start.Date.ToShortDateString(),
+                Name=internship.Name
             };
         }
 
@@ -32,8 +33,32 @@ namespace API.Mappers
                 Topics = internshipView.Topics,
                 Start = DateTime.Parse(internshipView.Start),
                 End = DateTime.Parse(internshipView.End),
-                Weeks = internshipView.Weeks
+                Weeks = internshipView.Weeks,
+                Name = internshipView.Name
             };
         }
+
+        public static InternshipManagementViewModel ToInternshipManagementViewModel(Internship internship)
+        {
+            return new InternshipManagementViewModel()
+            {
+                Id = internship.Id,
+                Name = internship.Name, 
+                TotalPlaces = internship.Places,
+                OccupiedPlaces = internship.OccupiedPlaces
+            };
+        }
+
+        public static InternshipForManagementViewModel ToInternshipManagement(Internship internship, string status, string companyName)
+        {
+            return new InternshipForManagementViewModel()
+            {
+                Id = internship.Id,
+                Name = internship.Name,
+                Status = status,
+                Company = companyName
+            };
+        }
+
     }
 }
